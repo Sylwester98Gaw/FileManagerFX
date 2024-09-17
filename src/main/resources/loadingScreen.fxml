@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="134.0" prefWidth="219.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoadingController">
+   <children>
+      <ProgressBar fx:id="progresBar" layoutX="10.0" layoutY="57.0" prefWidth="200.0" progress="0.0" />
+      <Label layoutX="88.0" layoutY="41.0" text="Postęp" />
+      <Label fx:id="labelFileIn" layoutX="10.0" layoutY="77.0" text="in" />
+      <Label fx:id="labelFileOut" layoutX="194.0" layoutY="77.0" text="out" />
+      <ImageView fx:id="imageView" fitHeight="32.0" fitWidth="33.0" layoutX="94.0" layoutY="9.0" pickOnBounds="true" preserveRatio="true" />
+   </children>
+</Pane>

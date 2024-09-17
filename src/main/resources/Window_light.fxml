@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright (c) 2015, 2019, Gluon and/or its affiliates.
+  All rights reserved. Use is subject to license terms.
+
+  This file is available and licensed under the following license:
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  - Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+  - Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in
+    the documentation and/or other materials provided with the distribution.
+  - Neither the name of Oracle Corporation nor the names of its
+    contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="vBox" prefHeight="470.0" prefWidth="855.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="script.controller.WindowController">
+  <children>
+      <HBox alignment="CENTER_LEFT" prefHeight="41.0" prefWidth="1283.0" style="-fx-background-color: #B2B6BB;">
+         <children>
+            <Button fx:id="backButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#backAction" prefHeight="10.0" prefWidth="27.0" style="-fx-background-color: #B2B6BB;">
+               <HBox.margin>
+                  <Insets left="5.0" right="1.0" />
+               </HBox.margin></Button>
+            <Separator prefWidth="10.0" visible="false" />
+            <CheckBox fx:id="hidden" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#hiddenAction" prefHeight="18.0" prefWidth="50.0" text="Ukryte">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </CheckBox>
+            <CheckBox alignment="CENTER" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" prefHeight="18.0" prefWidth="22.0" text="Tryb zaznaczania" textFill="#fcfcfc">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </CheckBox>
+            <Label fx:id="loadedFiles" minWidth="120.0" prefHeight="18.0" prefWidth="85.0" text="LoadedFiles" textAlignment="CENTER" />
+            <Button fx:id="terminalButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#termButtonAction" prefHeight="10.0" prefWidth="27.0" style="-fx-background-color: #B2B6BB;">
+               <HBox.margin>
+                  <Insets left="5.0" right="1.0" />
+               </HBox.margin>
+            </Button>
+            <Separator prefWidth="430.0" visible="false" />
+            <TextField fx:id="goPatch" minHeight="24.0" minWidth="350.0" prefHeight="24.0" prefWidth="350.0" translateX="2.0">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin></TextField>
+            <Button fx:id="goButton" contentDisplay="GRAPHIC_ONLY" layoutX="445.0" layoutY="10.0" mnemonicParsing="false" onAction="#goButtAction" prefHeight="24.0" prefWidth="25.0" scaleX="0.8" scaleY="0.8" style="-fx-background-color: #B2B6BB;" textAlignment="CENTER">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin></Button>
+         </children>
+         <effect>
+            <Glow />
+         </effect>
+      </HBox>
+      <SplitPane maxHeight="1000.0" maxWidth="1000.0" prefWidth="1000.0" style="-fx-background-color: #B2B6BB;">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1000.0" prefWidth="1000.0">
+               <children>
+                  <ListView fx:id="bookmarks" layoutX="3.0" maxHeight="1000.0" maxWidth="1000.0" onMouseClicked="#goToBookmarksDir" prefHeight="418.0" prefWidth="90.0" style="-fx-background-color: #B2B6BB;">
+                    </ListView>
+                  <ScrollPane cache="true" fitToHeight="true" fitToWidth="true" layoutX="93.0" maxHeight="1000.0" maxWidth="1000.0" minHeight="370.0" minWidth="33.0" pannable="true" prefHeight="406.0" prefWidth="753.0" vbarPolicy="ALWAYS" vvalue="1.0">
+                     <content>
+                        <FlowPane fx:id="flowPane" hgap="10.0" nodeOrientation="LEFT_TO_RIGHT" onMouseClicked="#event" rowValignment="TOP" style="-fx-background-color: #F8FAFC;" vgap="10.0" />
+                     </content>
+                  </ScrollPane>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+    <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" style="-fx-background-color: #B2B6BB;" VBox.vgrow="NEVER">
+      <children>
+            <MenuButton alignment="BASELINE_LEFT" contentDisplay="GRAPHIC_ONLY" minHeight="16.0" minWidth="35.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="17.0" textAlignment="CENTER">
+              <items>
+                <MenuItem fx:id="authorButton" mnemonicParsing="false" onAction="#author" text="O programie" />
+              </items>
+            </MenuButton>
+            <ImageView fx:id="status" fitHeight="10.0" fitWidth="10.0" pickOnBounds="true" preserveRatio="true" />
+        <Label fx:id="path" maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="l" HBox.hgrow="ALWAYS">
+          <font>
+            <Font size="11.0" fx:id="x3" />
+          </font>
+          <textFill>
+            <Color red="0.625" green="0.625" blue="0.625" fx:id="x4" />
+          </textFill>
+        </Label>
+        <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+            <Label fx:id="labelSelected" layoutX="840.0" layoutY="13.0" maxWidth="-1.0" text="R" textAlignment="CENTER">
+               <font>
+                  <Font size="11.0" fx:id="x31" />
+               </font>
+               <textFill>
+                  <Color red="0.625" green="0.625" blue="0.625" fx:id="x41" />
+               </textFill>
+            </Label>
+        <Label fx:id="lastPath" font="$x3" maxWidth="-1.0" text="r" textFill="$x4" HBox.hgrow="NEVER" />
+            <Button fx:id="resize" contentDisplay="GRAPHIC_ONLY" graphicTextGap="1.0" maxHeight="5.0" minHeight="15.0" mnemonicParsing="false" prefHeight="9.0" prefWidth="18.0" style="-fx-background-color: transparent;" />
+            <Label fx:id="copyItemName" prefHeight="18.0" prefWidth="33.0" text="null" textAlignment="CENTER" textFill="#eeeeee" />
+            <ProgressBar fx:id="progressBar" maxWidth="300.0" minWidth="200.0" prefHeight="15.0" prefWidth="200.0" progress="0.0" />
+      </children>
+      <padding>
+        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+      </padding>
+    </HBox>
+  </children>
+</VBox>
