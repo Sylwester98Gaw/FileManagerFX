@@ -4,5 +4,8 @@
 
 package script.contextMenus;
 
+import javafx.scene.control.ContextMenu;
+
 public class ContextMenuMultipleSelect {
+    public static ContextMenu contextMenuMultipleSelect = new ContextMenu();
 }

@@ -19,6 +19,8 @@ import javafx.scene.layout.FlowPane;
 
 import org.apache.commons.io.FilenameUtils;
 import script.helpers.Colors;
+import script.helpers.FileSys;
+import script.helpers.GetProgress;
 import script.helpers.ShowIcons;
 import script.properties.Config;
 
@@ -139,17 +141,6 @@ public class Labels extends ShowIcons{
                             case "gitignore":
                                 label.setGraphic(new ImageView(getImageFromNameFileIcons("gitignore.png")));
                                 break;
-                            case "png":
-                                try {
-                                    inputStream = new FileInputStream(file.getAbsolutePath());
-                                    image = new Image(inputStream, Double.parseDouble(Config.getFileX()), Double.parseDouble(Config.getFileY()), true, true);
-                                    inputStream.close();
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                                //label.setGraphic(new ImageView(getImageFromNameFileIcons("png.png")));
-                                label.setGraphic(new ImageView(image));
-                                break;
                             case "MOV":
                                 label.setGraphic(new ImageView(getImageFromNameFileIcons("mov.png")));
                                 break;
@@ -173,6 +164,8 @@ public class Labels extends ShowIcons{
                                 label.setGraphic(new ImageView(getImageFromNameFileIcons("avi.png")));
                                 break;
                             case "jpg":
+                            case "jpeg":
+                            case "png":
                                 try {
                                     inputStream = new FileInputStream(file.getAbsolutePath());
                                     image = new Image(inputStream, Double.parseDouble(Config.getFileX()), Double.parseDouble(Config.getFileY()), true, true);
@@ -185,7 +178,6 @@ public class Labels extends ShowIcons{
                                     throw new RuntimeException(e);
                                 }
                                 label.setGraphic(new ImageView(image));
-                                //    label.setGraphic(new ImageView(getImageFromNameFileIcons("jpg.png")));
                                 break;
                             case "txt":
                                 label.setGraphic(new ImageView(getImageFromNameFileIcons("txt.png")));

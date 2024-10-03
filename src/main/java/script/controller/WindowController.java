@@ -60,7 +60,7 @@ public class WindowController extends Labels implements Initializable, Runnable 
     public CheckBox hidden;
     public FlowPane flowPane;
     public VBox vBox;
-    public ImageView status; //  do wyjebania ?
+    public ImageView status; // coping icon ?
     public ProgressBar progressBar;
     public Label loadedFiles;
     public CheckBox checkMultipleSelect;
