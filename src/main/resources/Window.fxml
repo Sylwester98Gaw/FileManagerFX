@@ -69,7 +69,7 @@
                   <Insets left="5.0" />
                </HBox.margin>
             </CheckBox>
-            <CheckBox fx:id="checkMultipleSelect" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" prefHeight="18.0" prefWidth="22.0" text="Tryb zaznaczania" textFill="#fcfcfc">
+            <CheckBox fx:id="checkMultipleSelect" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#multipleAction" prefHeight="18.0" prefWidth="22.0" text="Tryb zaznaczania" textFill="#fcfcfc">
                <HBox.margin>
                   <Insets left="3.0" />
                </HBox.margin>

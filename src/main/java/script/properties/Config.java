@@ -2,6 +2,7 @@ package script.properties;
 
 import javafx.scene.control.Alert;
 import org.apache.commons.io.FileUtils;
+import script.helpers.Colors;
 import script.helpers.ShowAlerts;
 import script.helpers.FileSys;
 
@@ -23,7 +24,7 @@ public class Config {
     String yBookmark;
     String movingIcons;
     String langOption;
-
+    String viewColor;
     public static String getFileX() {
         return fileX;
     }
@@ -91,21 +92,22 @@ public class Config {
     private final File programConfigFile = new File(FileSys.HOME.getPath() + "/.SFM_files/FileManagerPROP.properties");
     private final File programTmps = new File(FileSys.HOME.getPath() + "/.SFM_files/tmps");
     private final File programExec = new File(FileSys.HOME.getPath() + "/.SFM_files/exec");
+    private final File programFileColorConfig = new File(FileSys.HOME.getPath() + "/.SFM_files/fileColorConfig");
     private final File programUserBookmarks = new File(FileSys.HOME.getPath() + "/.SFM_files/UserBookmarks");
     private ShowAlerts showAlerts = new ShowAlerts();
 
     public void checkDefaultProgramDirOrCreateIt() {
-        if (!programDirs.exists() && !programExec.exists() && !programTmps.exists() && !programUserBookmarks.exists() && !programConfigFile.exists()) {
+        if (!programDirs.exists() && !programExec.exists() && !programTmps.exists() && !programUserBookmarks.exists() && !programConfigFile.exists() && !programFileColorConfig.exists()) {
             try {
                 Properties propertiesConfig = new Properties();
                 propertiesConfig.setProperty("x", "48");
                 propertiesConfig.setProperty("y", "48");
                 propertiesConfig.setProperty("xBookmark", "16");
                 propertiesConfig.setProperty("yBookmark", "16");
-                propertiesConfig.setProperty("icoTheme", "/pack3");
-                propertiesConfig.setProperty("sfmTheme", "light");
+                propertiesConfig.setProperty("icoTheme", "/pack1");
+                propertiesConfig.setProperty("sfmTheme", "dark");
                 propertiesConfig.setProperty("moving", "false");
-                propertiesConfig.setProperty("autoRefreshMilis", "1000");
+                propertiesConfig.setProperty("autoRefreshMilis", "700");
                 propertiesConfig.setProperty("blinkingHidden", "true");
                 propertiesConfig.setProperty("lang", "null");
                 propertiesConfig.setProperty("showFileImageX", "56");
@@ -114,6 +116,7 @@ public class Config {
                 FileUtils.forceMkdir(programTmps);
                 FileUtils.forceMkdir(programExec);
                 FileUtils.forceMkdir(programUserBookmarks);
+                FileUtils.forceMkdir(programFileColorConfig);
                 new File(programDirs + "/FileManagerPROP" + ".properties");
                 System.out.println("make config");
                 propertiesConfig.store(new FileOutputStream(programDirs + "/FileManagerPROP" + ".properties"), "config");
@@ -244,6 +247,30 @@ public class Config {
             new File(FileSys.HOME.getPath() + "/.SFM_files/exec/" + nameOfDir + ".properties");
             properties.store(new FileOutputStream(FileSys.HOME.getPath() + "/.SFM_files/exec/" + nameOfDir + ".properties"), "dodatkowe oprogramowanie");
 
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public String loadFileViewColor(String nameOfDir) {
+        String value = null;
+        var prop = new Properties();
+        try {
+            prop.load(new FileInputStream(FileSys.HOME.getPath() + "/.SFM_files/fileColorConfig/" + nameOfDir + ".properties"));
+            value = prop.getProperty("color");
+        } catch (FileNotFoundException e) {
+            e.getStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return value;
+    }
+    public void saveFileViewColor(String nameOfDir, String colors) {
+        var prop = new Properties();
+        prop.setProperty("color", String.valueOf(colors));
+        try {
+            new File(FileSys.HOME.getPath() + "/.SFM_files/fileColorConfig/" + nameOfDir + ".properties");
+            prop.store(new FileOutputStream(FileSys.HOME.getPath() + "/.SFM_files/fileColorConfig/" + nameOfDir + ".properties"),"Ten plik przechowuje osobiste ustawienia " +
+                    "wyświetlania pliku/katalogu");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

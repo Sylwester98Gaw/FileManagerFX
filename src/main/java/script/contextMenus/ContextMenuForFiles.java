@@ -21,11 +21,11 @@ public class ContextMenuForFiles extends WindowController {
 
     public void contextMenuForFile(Optional<MenuItem> menuItem) {
         Menu open = new Menu("Otwórz za pomocą");
-        Menu setColor = new Menu("Zmień kolor wyświetlania");
+      //  Menu setColor = new Menu("Zmień kolor wyświetlania");
         MenuItem select = new MenuItem("Dodaj z listy programów");
         MenuItem copy = new MenuItem("Kopiuj");
         MenuItem move = new MenuItem("Przenieś");
-        MenuItem rename = new MenuItem("Zmień nazwę...");
+       // MenuItem rename = new MenuItem("Zmień nazwę...");
         MenuItem moveToTrash = new MenuItem("Przenieś do kosza");
         MenuItem properties = new MenuItem("Właściwości");
         open.getItems().add(select);
@@ -35,17 +35,17 @@ public class ContextMenuForFiles extends WindowController {
         }
         copy.setOnAction(actionEvent -> contextMenuCopy((selected)));
         properties.setOnAction(actionEvent -> contextMenuGetProperties(selected));
-        rename.setOnAction(actionEvent -> contextMenuRename(selected));
+       // rename.setOnAction(actionEvent -> contextMenuRename(selected));
         select.setOnAction(actionEvent -> addExecProgram((selected.getName())));
         moveToTrash.setOnAction(actionEvent -> contextMenuMoveToTrash(new File(selected.getPath())));
         move.setOnAction(actionEvent -> contextMenuMove());
         contextMenuForFiles.getItems().add(open);
         contextMenuForFiles.getItems().add(move);
         contextMenuForFiles.getItems().add(copy);
-        contextMenuForFiles.getItems().add(rename);
+       // contextMenuForFiles.getItems().add(rename);
         contextMenuForFiles.getItems().add(moveToTrash);
         contextMenuForFiles.getItems().add(properties);
-        contextMenuForFiles.getItems().add(setColor);
+       // contextMenuForFiles.getItems().add(setColor);
     }
     public void resetList(){
         try {

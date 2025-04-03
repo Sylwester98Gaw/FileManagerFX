@@ -1,6 +1,7 @@
 import atlantafx.base.theme.*;
 
 import javafx.scene.control.Alert;
+import script.criticException.PanicException;
 import script.helpers.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -15,7 +16,7 @@ import java.io.IOException;
 
 public class App extends Application {
     static String arguments = null;
-    private final String osName = System.getProperty("os.name");
+    private static final String osName = System.getProperty("os.name");
     ShowAlerts showAlerts = new ShowAlerts();
     /*
     Todo dodaj obsługę języka angielskiego
@@ -33,17 +34,23 @@ public class App extends Application {
         config.checkDefaultProgramDirOrCreateIt();
         config.openConfigFile();
         config.loadAddedBookmarks();
-        String typeOf_FXML;
-        if (config.getSfmTheme().equals("dark")) {
-            typeOf_FXML = "Window.fxml";
-            Application.setUserAgentStylesheet((new CupertinoDark()).getUserAgentStylesheet());
-        } else if (config.getSfmTheme().equals("light")) {
-            typeOf_FXML = "Window_light.fxml"; // light option
-            Application.setUserAgentStylesheet((new CupertinoLight()).getUserAgentStylesheet());
-        } else {
-            typeOf_FXML = "Window.fxml";
-            Application.setUserAgentStylesheet((new CupertinoDark()).getUserAgentStylesheet());
+        String typeOf_FXML = null;
+        try {
+            if (config.getSfmTheme().equals("dark")) {
+                typeOf_FXML = "Window.fxml";
+                Application.setUserAgentStylesheet((new CupertinoDark()).getUserAgentStylesheet());
+            } else if (config.getSfmTheme().equals("light")) {
+                typeOf_FXML = "Window_light.fxml"; // light option
+                Application.setUserAgentStylesheet((new CupertinoLight()).getUserAgentStylesheet());
+            } else {
+                typeOf_FXML = "Window.fxml";
+                Application.setUserAgentStylesheet((new CupertinoDark()).getUserAgentStylesheet());
+            }
+        }catch (NullPointerException e){
+            showAlerts.Alert(Alert.AlertType.ERROR,e.toString(),"nie można wczytać sceny","błąd");
+            e.printStackTrace();
         }
+
         AutoRefresh.setMilis(config.getAutoRefreshMilis());
         ShowIcons.setX(Integer.parseInt(config.getX()));
         ShowIcons.setY(Integer.parseInt(config.getY()));
@@ -55,17 +62,23 @@ public class App extends Application {
         // GetBookmarksVisible.setVisibleBookmarks(config.getBookmarks());
         ShowIcons showIcons = new ShowIcons();
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(typeOf_FXML));
-        Scene scene = new Scene(fxmlLoader.load(), 850, 470);
-        stage.setTitle("SFM - " + arguments);
-        stage.getIcons().add(showIcons.getImageFromName("fmfxicon.png", 96, 96));
-        stage.setResizable(false);
-        stage.setScene(scene);
-        stage.show();
+        try {
+            Scene scene = new Scene(fxmlLoader.load(), 850, 470);
+            stage.setTitle("SFM - " + arguments);
+            stage.getIcons().add(showIcons.getImageFromName("fmfxicon.png", 96, 96));
+            stage.setResizable(false);
+            stage.setScene(scene);
+            stage.show();
+        }catch (RuntimeException e){
+            throw new PanicException("The program cannot load the scene!");
+        }
     }
 
     void checkSystem() {
-        if (!osName.contains("Linux"))
+        if (!osName.contains("Linux")) {
             showAlerts.Alert(Alert.AlertType.WARNING, "Ten system " + osName + " nie rozpoznany", "Użyto innego systemu niż ten program jest w stanie obsłużyć", "Problem z systemem");
+            throw new PanicException("The system is not valid, the program is terminated as a result of an unsupported system. " + osName);
+        }
     }
 
     public static void main(String[] args) {

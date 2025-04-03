@@ -18,7 +18,6 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
@@ -30,15 +29,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
 import org.apache.commons.io.FilenameUtils;
-import script.contextMenus.ContextMenuForTrash;
+import script.contextMenus.*;
 import script.labels.Labels;
+import script.namespacesSecurity.NamesChecker;
 import script.properties.Config;
 import script.properties.TempFile;
 
 import script.actions.*;
-import script.contextMenus.ContextMenuForDirectory;
-import script.contextMenus.ContextMenuForFiles;
-import script.contextMenus.ContextMenuForFlowPane;
 import script.exec.ExecuteCommand;
 import script.helpers.*;
 
@@ -65,6 +62,7 @@ public class WindowController extends Labels implements Initializable, Runnable 
     public Label loadedFiles;
     public CheckBox checkMultipleSelect;
     ExecuteCommand executeCommand = new ExecuteCommand();
+    AddToList addToList = new AddToList();
     public boolean isHiddenFilter = false;
     ShowAlerts showAlerts = new ShowAlerts();
     public static int actObjects;
@@ -80,11 +78,14 @@ public class WindowController extends Labels implements Initializable, Runnable 
         ContextMenuForTrash contextMenuForTrash = new ContextMenuForTrash();
         contextMenuForTrash.contextMenuForTrash();
 
+        ContextMenuMultipleSelect contextMenuMultipleSelect = new ContextMenuMultipleSelect();
+        contextMenuMultipleSelect.contextMenuMultipleSelect();
+
         contextMenuForFiles = new ContextMenuForFiles();
 
         GetProgress.setProgressBar(progressBar);
         GetBookmarksList.setGetBookmark(bookmarks);
-
+        GetMultipleSelect.setCheckBox(checkMultipleSelect);
         path.setText(Arg.getArgument()); // start position
 
         file = new File(path.getText());
@@ -168,8 +169,25 @@ public class WindowController extends Labels implements Initializable, Runnable 
      * @param path
      */
     public void contextMenuMoveToTrash(File path) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Przenoszenie do kosza");
+        if (GetMultipleSelect.getCheckBox().isSelected()){
+            alert.setHeaderText("Przenoszenie do kosza " + AddToList.list.toString());
+        }else {
+            alert.setHeaderText("Przenoszenie do kosza " + path.getPath());
+        }
+        ButtonType okButton = new ButtonType("OK");
+        ButtonType cancelButton = new ButtonType("Anuluj", ButtonType.CANCEL.getButtonData());
+        alert.getButtonTypes().setAll(okButton, cancelButton);
         Delete delete = new Delete();
-        delete.moveToTrash(path);
+        alert.showAndWait().ifPresent(response -> {
+            if (response == okButton)
+                if (GetMultipleSelect.getCheckBox().isSelected()){
+                    delete.moveToTrashAll(GetProgress.getProgressBar());
+                }else {
+                    delete.moveToTrash(path, GetProgress.getProgressBar());
+                }
+        });
     }
 
     public void contextMenuCreateDir(File path) {
@@ -181,7 +199,36 @@ public class WindowController extends Labels implements Initializable, Runnable 
         CreateDirOrFiles createDirectory = new CreateDirOrFiles();
         createDirectory.makeNewDirectory(path, false);
     }
-
+    public void setViewColor(String color, File path){
+        Config config = new Config();
+        switch (color){
+            case "red":
+                config.saveFileViewColor(String.valueOf(path),"RED");
+                break;
+            case "green":
+                config.saveFileViewColor(String.valueOf(path),"GREEN");
+                break;
+            case "blue":
+                config.saveFileViewColor(String.valueOf(path),"BLUE");
+                break;
+            case "silver":
+                config.saveFileViewColor(String.valueOf(path),"SILVER");
+                break;
+            case "white":
+                config.saveFileViewColor(String.valueOf(path),"WHITE");
+                break;
+            case "yellow":
+                config.saveFileViewColor(String.valueOf(path),"YELLOW");
+                break;
+            case "purple":
+                config.saveFileViewColor(String.valueOf(path),"PURPLE");
+                break;
+            case "none":
+                config.saveFileViewColor(String.valueOf(path),"none");
+                break;
+        }
+        objects++; // Force refresh
+    }
     public void contextMenuCreateZipFile() {
 
     }
@@ -212,7 +259,11 @@ public class WindowController extends Labels implements Initializable, Runnable 
         directoryChooser.setInitialDirectory(new File(FileSys.HOME.getPath()));
         directoryChooser.setTitle("Przenoszenie");
         Move move = new Move();
-        move.move(selected, directoryChooser.showDialog(null));
+        if (GetMultipleSelect.getCheckBox().isSelected()){
+            move.moveAll(directoryChooser.showDialog(null), GetProgress.getProgressBar());
+        }else {
+            move.move(selected, directoryChooser.showDialog(null),GetProgress.getProgressBar());
+        }
     }
 
     public void contextMenuCopy(File path) {
@@ -228,6 +279,21 @@ public class WindowController extends Labels implements Initializable, Runnable 
     }
 
     public void contextMenuRename(File path) {
+        NamesChecker namesChecker = new NamesChecker();
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Zmień nazwę");
+        dialog.setHeaderText("Nowa nazwa dla " + path);
+        dialog.setContentText("Nowa nazwa: ");
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(directoryName -> {
+            if (!namesChecker.checkName(result.toString())) {
+                Rename rename = new Rename(result.get(),path);
+                rename.renameFile();
+                objects ++; // Force refresh
+            }else {
+                namesChecker.badName();
+            }
+        });
     }
 
     public void addExecProgram(String path) {
@@ -263,7 +329,7 @@ public class WindowController extends Labels implements Initializable, Runnable 
             System.out.println(file.getPath());
             if (file.exists()) {
                 path.setText(file.getPath());
-                refresh(this.flowPane, path, lastPath, goPatch, isHiddenFilter,loadedFiles);
+                refreshList();
             } else {
                 showAlerts.Alert(Alert.AlertType.INFORMATION, "Katalog nie istnieje", "Ścieżka nie jest prawidłowa", "Informacja");
             }
@@ -286,7 +352,7 @@ public class WindowController extends Labels implements Initializable, Runnable 
     }
 
     ///////////////////////////////////////
-    // OPENING PROGRAMS
+    /// OPENING PROGRAMS
     //////////////////////////////////////
     public void runInProgram(File file) {
         if (checkTheFileExtension(file)) {
@@ -324,7 +390,7 @@ public class WindowController extends Labels implements Initializable, Runnable 
                     file = new File(path.getText());
                     selected = null;
                     backButton.setDisable(path.getText().equals("/"));
-                    refresh(this.flowPane, path, lastPath, goPatch, isHiddenFilter,loadedFiles);
+                    refreshList();
                 }
             } catch (NullPointerException e) {
                 System.out.println(path.getText());
@@ -344,7 +410,7 @@ public class WindowController extends Labels implements Initializable, Runnable 
                 objects = 0;
                 lastPathDir = null;
                 forwardButton.setDisable(true);
-                refresh(this.flowPane, path, lastPath, goPatch, isHiddenFilter,loadedFiles);
+                refreshList();
             }
         }catch (NullPointerException e){
             e.printStackTrace();
@@ -358,7 +424,7 @@ public class WindowController extends Labels implements Initializable, Runnable 
                 goPatch.setText(getBookmarkDir());
                 file = new File(path.getText());
                 backButton.setDisable(path.getText().equals("/"));
-                refresh(this.flowPane, path, lastPath, goPatch, isHiddenFilter,loadedFiles);
+                refreshList();
             }else if (mouseEvent.getButton() == MouseButton.SECONDARY){
                 System.out.println("nic tu narazie  nie ma i chuj");// todo
             }
@@ -373,16 +439,19 @@ public class WindowController extends Labels implements Initializable, Runnable 
         lastPathDir =  null;
         switch (value) {
             case "Home":
+                forwardButton.setDisable(true);
                 return FileSys.HOME.getPath();
             case "System":
+                forwardButton.setDisable(true);
                 return FileSys.SYSTEM.getPath();
             case "Trash":
+                forwardButton.setDisable(true);
                 return FileSys.HOME.getPath() + FileSys.TRASH.getPath();
         }
         return Config.bookmarkMap.get(value);
     }
     public void refreshList() {
-        refresh(this.flowPane, path, lastPath, goPatch, isHiddenFilter,loadedFiles);
+        refresh(this.flowPane, this.path, this.lastPath, this.goPatch, this.isHiddenFilter,this.loadedFiles);
     }
 
     public void hiddenAction() {
@@ -395,74 +464,89 @@ public class WindowController extends Labels implements Initializable, Runnable 
         refreshList();
     }
 
+    public void multipleAction(ActionEvent actionEvent) {
+        if (checkMultipleSelect.isSelected()){
+            addToList.removeAll();
+            refreshList();
+        }
+    }
+
     public void event(MouseEvent mouseEvent) {
         ContextMenuForFiles.getContextMenuForFiles().hide();
         ContextMenuForDirectory.getDirContext().hide();
         ContextMenuForTrash.getContextMenuForTrash().hide();
-        try {
-            if (clicked == null) {
-                selected = null;
-            } else {
-                selected = new File(lastPath.getText() + "/" + clicked.getText());
-                labelSelected.setText(String.valueOf(selected));
+        ContextMenuMultipleSelect.getContextMenuMultipleSelect().hide();
+        if (!checkMultipleSelect.isSelected()){
+            try {
+                if (clicked == null) {
+                    selected = null;
+                } else {
+                    selected = new File(lastPath.getText() + "/" + clicked.getText());
+                    labelSelected.setText(String.valueOf(selected));
+                }
+            } catch (NullPointerException e) {
+                e.printStackTrace();
             }
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-        if (mouse == 2 && mouseEvent.getButton() == MouseButton.PRIMARY) {
-            assert selected != null;
-            path.setText(selected.toString());
-            file = new File(path.getText().trim());
-            if (file.isDirectory()) {
-                lastPathDir = null;
-                forwardButton.setDisable(true);
-                objects = 0;
-                refresh(this.flowPane, path, lastPath, goPatch, isHiddenFilter,loadedFiles);
-                selected = null;
-            } else {
-                System.out.println("Nie jest to katalog mogę tylko wykonać");
-                runInProgram(file);
-                file = new File(file.getParent());
-                path.setText(file.getPath()); // Fixes a bug related to hidden files
-                selected = null;
+            if (mouse == 2 && mouseEvent.getButton() == MouseButton.PRIMARY) {
+                assert selected != null;
+                path.setText(selected.toString());
+                file = new File(path.getText().trim());
+                if (file.isDirectory()) {
+                    lastPathDir = null;
+                    forwardButton.setDisable(true);
+                    objects = 0;
+                    refreshList();
+                    selected = null;
+                } else {
+                    System.out.println("Nie jest to katalog mogę tylko wykonać");
+                    runInProgram(file);
+                    file = new File(file.getParent());
+                    path.setText(file.getPath()); // Fixes a bug related to hidden files
+                    selected = null;
+                }
             }
-        }
-        if (!(clicked == null) && mouseEvent.getButton() == MouseButton.SECONDARY) {
-            if (selected.isDirectory() && !path.getText().equals(FileSys.HOME.getPath() + FileSys.TRASH.getPath())) {
-                ContextMenuForDirectory.getDirContext().show(flowPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+            if (!(clicked == null) && mouseEvent.getButton() == MouseButton.SECONDARY) {
+                if (selected.isDirectory() && !path.getText().equals(FileSys.HOME.getPath() + FileSys.TRASH.getPath())) {
+                    ContextMenuForDirectory.getDirContext().show(flowPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
 
-            } else if (selected.isDirectory() || selected.isFile() && path.getText().equals(FileSys.HOME.getPath() + FileSys.TRASH.getPath())) {
-                ContextMenuForFiles.getContextMenuForFiles().hide();
-                ContextMenuForFiles.getContextMenuForFiles().hide();
-                ContextMenuForTrash.getContextMenuForTrash().show(flowPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-            } else {
-                Config config = new Config();
-                if (config.loadAddedProgram(selected.getName()) != null) {
-                    contextMenuForFiles.resetList();
-                    MenuItem menuItem = new MenuItem(config.loadAddedProgram(selected.getName()));
-                    contextMenuForFiles.contextMenuForFile(Optional.of(menuItem));
-                    ContextMenuForFiles.getContextMenuForFiles().show(flowPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-                } else if (config.loadAddedProgram(selected.getName()) == null) {
-                    contextMenuForFiles.resetList();
-                    contextMenuForFiles.contextMenuForFile(Optional.empty());
-                    ContextMenuForFiles.getContextMenuForFiles().show(flowPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+                } else if (selected.isDirectory() || selected.isFile() && path.getText().equals(FileSys.HOME.getPath() + FileSys.TRASH.getPath())) {
+                    ContextMenuForFiles.getContextMenuForFiles().hide();
+                    ContextMenuForFiles.getContextMenuForFiles().hide();
+                    ContextMenuForTrash.getContextMenuForTrash().show(flowPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+                } else {
+                    Config config = new Config();
+                    if (config.loadAddedProgram(selected.getName()) != null) {
+                        contextMenuForFiles.resetList();
+                        MenuItem menuItem = new MenuItem(config.loadAddedProgram(selected.getName()));
+                        contextMenuForFiles.contextMenuForFile(Optional.of(menuItem));
+                        ContextMenuForFiles.getContextMenuForFiles().show(flowPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+                    } else if (config.loadAddedProgram(selected.getName()) == null) {
+                        contextMenuForFiles.resetList();
+                        contextMenuForFiles.contextMenuForFile(Optional.empty());
+                        ContextMenuForFiles.getContextMenuForFiles().show(flowPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+                    }
+                }
+            }
+            if (ContextMenuForFiles.contextMenuForFiles.isShowing() || ContextMenuForDirectory.getDirContext().isShowing()) {
+                ContextMenuForFlowPane.getContextMenuFlowPane().hide();
+            } else if (mouseEvent.getButton() == MouseButton.SECONDARY && !path.getText().equals(FileSys.HOME.getPath() + FileSys.TRASH.getPath())) {
+                ContextMenuForFlowPane.getContextMenuFlowPane().show(flowPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+            }
+            if (mouseEvent.getButton() == MouseButton.PRIMARY) {
+                ContextMenuForFlowPane.getContextMenuFlowPane().hide();
+            }
+        }else { // multiple select event
+            if (mouseEvent.getButton() == MouseButton.SECONDARY){
+                ContextMenuMultipleSelect.contextMenuMultipleSelect.show(flowPane,mouseEvent.getScreenX(),mouseEvent.getScreenY());
+            }else if (mouseEvent.getButton() == MouseButton.PRIMARY && !(clicked.getText() == null)){
+                ContextMenuMultipleSelect.getContextMenuMultipleSelect().hide();
+                if (addToList.checkItem(path.getText() + "/" + clicked.getText())){
+                    addToList.removeSelectedFromList(path.getText()+"/"+clicked.getText());
+                }else {
+                    addToList.addSelectedToList(path.getText()+"/"+clicked.getText());
                 }
             }
         }
-        if (ContextMenuForFiles.contextMenuForFiles.isShowing() || ContextMenuForDirectory.getDirContext().isShowing()) {
-            ContextMenuForFlowPane.getContextMenuFlowPane().hide();
-        } else if (mouseEvent.getButton() == MouseButton.SECONDARY && !path.getText().equals(FileSys.HOME.getPath() + FileSys.TRASH.getPath())) {
-            ContextMenuForFlowPane.getContextMenuFlowPane().show(flowPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-        }
-        if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-            ContextMenuForFlowPane.getContextMenuFlowPane().hide();
-        }
-    }
-
-    public void author() {
-        ImageView imageView = new ImageView(getImageFromName("java.png", 96, 96));
-        showAlerts.Alert(Alert.AlertType.INFORMATION, "'SylwesterFileManager' SFM to program który umożliwia obsługę plików.\n Autor: Sylwester Gawroński", "Wersja:\n " +
-                "0.9.0.5", "O programie", imageView);
     }
 
     /**
@@ -474,7 +558,7 @@ public class WindowController extends Labels implements Initializable, Runnable 
             while (true) {
                 try {
                     Thread.sleep(AutoRefresh.getMilis());//
-                    FileFilter fileFilter = pathname -> pathname.isHidden() ? isHiddenFilter : true; // wypierdol do nowej klasy bez sensu pisać do 20 razy
+                    FileFilter fileFilter = pathname -> pathname.isHidden() ? isHiddenFilter : true;
                     fileStatusControl = new File(path.getText());
                     File[] filesList = file.listFiles(fileFilter);
                     try {
@@ -489,7 +573,7 @@ public class WindowController extends Labels implements Initializable, Runnable 
                 }
                 Platform.runLater(() -> { // update view
                     if (objects != actObjects) {
-                        refresh(this.flowPane, path, lastPath, goPatch, isHiddenFilter,loadedFiles);
+                        refreshList();
                         System.out.println("Auto Refresh");
                     }
                 });
@@ -497,6 +581,12 @@ public class WindowController extends Labels implements Initializable, Runnable 
         });
         thread.setDaemon(true);
         thread.start();
+    }
+
+    public void author() {
+        ImageView imageView = new ImageView(getImageFromName("java.png", 76, 76));
+        showAlerts.Alert(Alert.AlertType.INFORMATION, "'SylwesterFileManager' SFM to program który umożliwia obsługę plików.\n Autor: Sylwester Gawroński", "Wersja:\n " +
+                "0.9.0.6", "O programie", imageView);
     }
     // END
 }

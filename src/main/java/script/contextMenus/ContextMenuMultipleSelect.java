@@ -5,7 +5,23 @@
 package script.contextMenus;
 
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import script.controller.WindowController;
 
-public class ContextMenuMultipleSelect {
+public class ContextMenuMultipleSelect extends WindowController {
     public static ContextMenu contextMenuMultipleSelect = new ContextMenu();
+
+    public static ContextMenu getContextMenuMultipleSelect() {
+        return contextMenuMultipleSelect;
+    }
+    public void contextMenuMultipleSelect(){
+        MenuItem copy = new MenuItem("Kopiuj");
+        MenuItem move = new MenuItem("Przenieś");
+        MenuItem moveToTrash = new MenuItem("Przenieś do kosza");
+        moveToTrash.setOnAction(actionEvent -> contextMenuMoveToTrash(null));
+        move.setOnAction(actionEvent -> contextMenuMove());
+        //contextMenuMultipleSelect.getItems().add(copy); TODO
+        contextMenuMultipleSelect.getItems().add(move);
+        contextMenuMultipleSelect.getItems().add(moveToTrash);
+    }
 }

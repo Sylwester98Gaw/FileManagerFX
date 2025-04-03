@@ -1,5 +1,8 @@
 package script.actions;
 
+import javafx.concurrent.Task;
+import javafx.scene.control.ProgressBar;
+import script.helpers.AddToList;
 import script.helpers.ShowAlerts;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -12,18 +15,80 @@ import java.io.IOException;
 public class Delete {
     ShowAlerts showAlerts = new ShowAlerts();
 
-    public void moveToTrash(File path){
-        showAlerts.Alert(Alert.AlertType.INFORMATION,"Przenoszenie do kosza",path.getName(),"Do kosza");
-        try {
-            if (!path.isDirectory()){
-                FileUtils.moveFileToDirectory(path, new File(FileSys.HOME.getPath() + "/.local/share/Trash/files"),false);
-            }else {
-                FileUtils.moveDirectoryToDirectory(path, new File(FileSys.HOME.getPath() + "/.local/share/Trash/files"),false);
+    public void moveToTrash(File path, ProgressBar progressBar){
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                try {
+                    if (!path.isDirectory()){
+                        FileUtils.moveFileToDirectory(path, new File(FileSys.HOME.getPath() + "/.local/share/Trash/files"),false);
+                    }else {
+                        FileUtils.moveDirectoryToDirectory(path, new File(FileSys.HOME.getPath() + "/.local/share/Trash/files"),false);
+                    }
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+                return null;
             }
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+        };
+        progressBar.progressProperty().bind(task.progressProperty());
+        task.setOnSucceeded(event -> {
+            if (task.isDone()) {
+                progressBar.progressProperty().unbind();
+                progressBar.setProgress(1);
+                showAlerts.Alert(Alert.AlertType.INFORMATION,"Przeniesiono ", "Przeniesiono do kosza", "Kosz");
+            }
+        });
+        task.setOnCancelled(event -> {
+            progressBar.progressProperty().unbind();
+            progressBar.setProgress(0.0);
+        });
 
+        task.setOnFailed(event -> {
+            progressBar.progressProperty().unbind();
+            progressBar.setProgress(0.0);
+        });
+        new Thread(task).start();
+    }
+
+    public void moveToTrashAll(ProgressBar progressBar){
+        AddToList addToList = new AddToList();
+        for (File files : AddToList.list) {
+            Task<Void> task = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    try {
+                        if (!files.isDirectory()){
+                            FileUtils.moveFileToDirectory(files, new File(FileSys.HOME.getPath() + "/.local/share/Trash/files"),false);
+                        }else {
+                            FileUtils.moveDirectoryToDirectory(files, new File(FileSys.HOME.getPath() + "/.local/share/Trash/files"),false);
+                        }
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+            };
+            progressBar.progressProperty().bind(task.progressProperty());
+            task.setOnSucceeded(event -> {
+                if (task.isDone()) {
+                    progressBar.progressProperty().unbind();
+                    progressBar.setProgress(1);
+                    showAlerts.Alert(Alert.AlertType.INFORMATION, "Skopiowano ", "Wykonano", "Kopiowanie ");
+                    addToList.removeAll();
+                }
+            });
+            task.setOnCancelled(event -> {
+                progressBar.progressProperty().unbind();
+                progressBar.setProgress(0.0);
+            });
+
+            task.setOnFailed(event -> {
+                progressBar.progressProperty().unbind();
+                progressBar.setProgress(0.0);
+            });
+            new Thread(task).start();
+        }
     }
     public void delete(File file) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

@@ -29,16 +29,15 @@ public class CreateDirOrFiles {
                     File newDirectory = new File(pathWhere + "/" + result.get()+".txt"); //MakeFile false
                     mkfile(newDirectory);
                 }
-
             } else {
-                badName();
+                namesChecker.badName();
             }
         });
     }
 
     public void mkdir(File newDirectory) {
         if (newDirectory.exists()) {
-            showAlerts.Alert(Alert.AlertType.ERROR, newDirectory.getName(), "Katalog już istnieje", "Bład");
+            showAlerts.Alert(Alert.AlertType.ERROR, newDirectory.getName(), "Katalog już istnieje", "Błąd");
         } else {
             boolean success = newDirectory.mkdir();
             if (success) {
@@ -51,7 +50,7 @@ public class CreateDirOrFiles {
 
     public void mkfile(File newFile) {
         if (newFile.exists()) {
-            showAlerts.Alert(Alert.AlertType.ERROR, newFile.getName(), "Plik już istnieje", "Bład");
+            showAlerts.Alert(Alert.AlertType.ERROR, newFile.getName(), "Plik już istnieje", "Błąd");
         } else {
             boolean success = false;
             try {
@@ -65,8 +64,5 @@ public class CreateDirOrFiles {
                 showAlerts.Alert(Alert.AlertType.ERROR, newFile.getName(), "Coś nie działa", "Błąd");
             }
         }
-    }
-    public void badName(){
-        showAlerts.Alert(Alert.AlertType.WARNING,"Uwaga !","Nie można w nazwie używać znaku /","Mamy problem :/");
     }
 }

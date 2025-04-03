@@ -5,6 +5,7 @@
 package script.labels;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javafx.application.Platform;
@@ -19,8 +20,7 @@ import javafx.scene.layout.FlowPane;
 
 import org.apache.commons.io.FilenameUtils;
 import script.helpers.Colors;
-import script.helpers.FileSys;
-import script.helpers.GetProgress;
+import script.helpers.GetMultipleSelect;
 import script.helpers.ShowIcons;
 import script.properties.Config;
 
@@ -50,7 +50,7 @@ public class Labels extends ShowIcons{
     public static void setMouse(int mouse) {
         Labels.mouse = mouse;
     }
-
+    ArrayList<Label> specialViewList = new ArrayList<>();
     public static int mouse;
     BlinkingLabel blinkingLabel = new BlinkingLabel();
     private InputStream inputStream;
@@ -65,8 +65,13 @@ public class Labels extends ShowIcons{
         filesLenght = 0;
         File directoryPath = new File(path.getText());
         File[] filesList = directoryPath.listFiles(fileFilter);
-        if (filesList.length == 0 ){
-            loadedFiles.setText("Katalog jest pusty");
+        try {
+            if (filesList.length == 0 ){
+                loadedFiles.setText("Katalog jest pusty");
+            }
+        }catch (NullPointerException e){
+            e.printStackTrace();
+            loadedFiles.setText("Błąd ! NPE");
         }
         filesLenght = filesList.length;
         try {
@@ -76,10 +81,47 @@ public class Labels extends ShowIcons{
                 for (File file : filesList) {
                     Label label = new Label(file.getName());
                     label.setContentDisplay(ContentDisplay.LEFT); // set display
-                    if (!isHiddenFilter) { // load translate
+                    if (GetMultipleSelect.getCheckBox().isSelected()){
+                        if (specialViewList.contains(label)){
+                            label.setStyle("-fx-background-color: #28a300; -fx-background-radius: 5;");
+                        }
+                    }
+                    if (!isHiddenFilter) { // load translate and color - view settings ignore when hidden filter is true
                         Config config = new Config();
                         label.setTranslateX(config.loadTranslate(true, file.getName()));
                         label.setTranslateY(config.loadTranslate(false, file.getName()));
+                        String clr = config.loadFileViewColor(file.getName());
+                        if (!(clr == null)){
+                            switch (clr){
+                                case "RED":
+                                    label.setStyle("-fx-background-color: red; -fx-background-radius: 5;");
+                                    break;
+                                case "BLUE":
+                                    label.setStyle("-fx-background-color: blue; -fx-background-radius: 5;");
+                                    break;
+                                case "GREEN":
+                                    label.setStyle("-fx-background-color: green; -fx-background-radius: 5;");
+                                    break;
+                                case "SILVER":
+                                    label.setTextFill(Colors.DEFAULT.getColor());
+                                    label.setStyle("-fx-background-color: silver; -fx-background-radius: 5;");
+                                    break;
+                                case "WHITE":
+                                    label.setTextFill(Colors.DEFAULT.getColor());
+                                    label.setStyle("-fx-background-color: white; -fx-background-radius: 5;");
+                                    break;
+                                case "YELLOW":
+                                    label.setTextFill(Colors.DEFAULT.getColor());
+                                    label.setStyle("-fx-background-color: yellow; -fx-background-radius: 5;");
+                                    break;
+                                case "PURPLE":
+                                    label.setStyle("-fx-background-color: purple; -fx-background-radius: 5;");
+                                    break;
+                                case "none":
+                                    label.setStyle("-fx-background-color: transparent;");
+                                    break;
+                            }
+                        }
                     }
                     if (file.isHidden()) { // showing hidden dirs and files
                         label.setTextFill(Colors.HIDDEN.getColor());
@@ -202,6 +244,7 @@ public class Labels extends ShowIcons{
                                 break;
                         }
                     }
+
                     label.setOnMouseEntered(mouseEvent -> entered(label));
                     label.setOnMouseExited(mouseEvent -> exited(label));
                     if (GetMove.getMoveIcon().equals("true")) {
@@ -239,14 +282,29 @@ public class Labels extends ShowIcons{
             if (mouse >= 2) {
                 label.setStyle("-fx-background-color: #28a300; -fx-background-radius: 5;");
             }
+            if (GetMultipleSelect.getCheckBox().isSelected() && mouseEvent.getButton() == MouseButton.PRIMARY){
+                if (mouse >=1) {
+                    if (checkItem(label)){
+                        removeSelectedFromList(label);
+                    }else {
+                        addSelectedToList(label);
+                    }
+                }
+            }
         });
-        label.setStyle("-fx-background-color: #444444; -fx-background-radius: 5;");
+        if(!GetMultipleSelect.getCheckBox().isSelected()){
+            removeAll();
+            label.setStyle("-fx-background-color: #444444; -fx-background-radius: 5;");
+        }
+
     }
 
     private void exited(Label label) {
         clicked = null; // this fix a bug
         mouse = 0;
-        label.setStyle("-fx-background-color: transparent;");
+        if (!specialViewList.contains(label)){
+            label.setStyle("-fx-background-color: transparent;"); // TODO
+        }
     }
 
     private void press(Label label, MouseEvent mouseEvent) {
@@ -273,6 +331,30 @@ public class Labels extends ShowIcons{
                 label.setTranslateY(mouseEvent.getSceneY() + translateY);
                 config.saveTranslate(label.getTranslateX(), label.getTranslateY(), label.getText());
             }
+        }
+    }
+    public void addSelectedToList(Label item){
+        item.setStyle("-fx-background-color: #28a300; -fx-background-radius: 5;");
+        specialViewList.add(item);
+        System.out.println(specialViewList);
+    }
+    public void removeSelectedFromList(Label item){
+        specialViewList.remove(item);
+        System.out.println(specialViewList);
+    }
+    public boolean checkItem (Label item){
+        return specialViewList.contains(item);
+    }
+    public void removeAll(){
+        try {
+            for (int i = 0; i < specialViewList.size(); i++) {
+                specialViewList.remove(i);
+            }
+            if (!specialViewList.isEmpty()){
+                removeAll();
+            }
+        }catch (Exception e){
+            e.getStackTrace();
         }
     }
 }
