@@ -48,6 +48,7 @@ SFM is still in development
 ![Screenshot 2](images/2.png)
 ![Screenshot 3](images/3.png)
 ![Screenshot 4](images/4.png)
+![Screenshot 4](images/1an.gif)
 
 **Known Issues:**
 
