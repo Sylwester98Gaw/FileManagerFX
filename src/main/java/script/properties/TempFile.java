@@ -7,7 +7,7 @@ import script.helpers.FileSys;
 import java.io.*;
 
 public class TempFile {
-    private static final File file = new File(FileSys.HOME.getPath()+"/.SFM_files/tmps/SFM_Coping_Dat.tmp");
+    private static final File file = new File(FileSys.HOME.getPath()+"/.SFM_data/tmps/SFM_Coping_Dat.tmp");
     ShowAlerts showAlerts = new ShowAlerts();
     public void createTmpFile(String paths) { //when click copy
         try {
@@ -26,7 +26,7 @@ public class TempFile {
         }
     }
 
-    public String readTmpFile() { // when click paste-move
+    public String readTmpFile() { // when click paste
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
             String line;

@@ -25,24 +25,24 @@ public class ContextMenuForFiles extends WindowController {
         MenuItem select = new MenuItem("Dodaj z listy programów");
         MenuItem copy = new MenuItem("Kopiuj");
         MenuItem move = new MenuItem("Przenieś");
-       // MenuItem rename = new MenuItem("Zmień nazwę...");
+        MenuItem rename = new MenuItem("Zmień nazwę...");
         MenuItem moveToTrash = new MenuItem("Przenieś do kosza");
         MenuItem properties = new MenuItem("Właściwości");
         open.getItems().add(select);
         if (menuItem.isPresent()){
             menuItem.ifPresent(item -> open.getItems().add(item));
-            menuItem.get().setOnAction(actionEvent -> runWithAddedProgram(selected,menuItem.get().getText()));
+            menuItem.get().setOnAction(_ -> runWithAddedProgram(selected,menuItem.get().getText()));
         }
-        copy.setOnAction(actionEvent -> contextMenuCopy((selected)));
-        properties.setOnAction(actionEvent -> contextMenuGetProperties(selected));
-       // rename.setOnAction(actionEvent -> contextMenuRename(selected));
-        select.setOnAction(actionEvent -> addExecProgram((selected.getName())));
-        moveToTrash.setOnAction(actionEvent -> contextMenuMoveToTrash(new File(selected.getPath())));
-        move.setOnAction(actionEvent -> contextMenuMove());
+        copy.setOnAction(_ -> contextMenuCopy((selected)));
+        properties.setOnAction(_ -> contextMenuGetProperties(selected));
+        rename.setOnAction(_ -> contextMenuRename(selected));
+        select.setOnAction(_ -> addExecProgram((selected.getName())));
+        moveToTrash.setOnAction(_ -> contextMenuMoveToTrash(new File(selected.getPath())));
+        move.setOnAction(_ -> contextMenuMove());
         contextMenuForFiles.getItems().add(open);
         contextMenuForFiles.getItems().add(move);
         contextMenuForFiles.getItems().add(copy);
-       // contextMenuForFiles.getItems().add(rename);
+        contextMenuForFiles.getItems().add(rename);
         contextMenuForFiles.getItems().add(moveToTrash);
         contextMenuForFiles.getItems().add(properties);
        // contextMenuForFiles.getItems().add(setColor);

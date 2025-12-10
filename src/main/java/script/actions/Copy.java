@@ -36,21 +36,17 @@ public class Copy {
                             return null;
                         }
                     };
-                    progressBar.progressProperty().bind(task.progressProperty());
+                    progressBar.setProgress(-1);
                     task.setOnSucceeded(event -> {
                         if (task.isDone()) {
-                            progressBar.progressProperty().unbind();
                             progressBar.setProgress(1);
                             showAlerts.Alert(Alert.AlertType.INFORMATION, "Skopiowano ", "" + from + " do " + to, "Kopiowanie ");
                         }
                     });
                     task.setOnCancelled(event -> {
-                        progressBar.progressProperty().unbind();
                         progressBar.setProgress(0.0);
                     });
-
                     task.setOnFailed(event -> {
-                        progressBar.progressProperty().unbind();
                         progressBar.setProgress(0.0);
                     });
                     new Thread(task).start();
@@ -67,22 +63,19 @@ public class Copy {
                             return null;
                         }
                     };
-                    progressBar.progressProperty().bind(task.progressProperty());
+                    progressBar.setProgress(-1);
                     task.setOnSucceeded(event -> {
                         if (task.isDone()) {
-                            progressBar.progressProperty().unbind();
                             progressBar.setProgress(1);
                             showAlerts.Alert(Alert.AlertType.INFORMATION, "Skopiowano ", "" + from + " do " + to, "Kopiowanie ");
                         }
                     });
 
                     task.setOnCancelled(event -> {
-                        progressBar.progressProperty().unbind();
                         progressBar.setProgress(0.0);
                     });
 
                     task.setOnFailed(event -> {
-                        progressBar.progressProperty().unbind();
                         progressBar.setProgress(0.0);
                     });
                     new Thread(task).start();

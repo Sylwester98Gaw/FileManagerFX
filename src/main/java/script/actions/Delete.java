@@ -11,7 +11,7 @@ import script.helpers.FileSys;
 
 import java.io.File;
 import java.io.IOException;
-
+// TODO problem z przenoszeniem większych plików np z powodu braku miejsca w koszu
 public class Delete {
     ShowAlerts showAlerts = new ShowAlerts();
 
@@ -21,9 +21,9 @@ public class Delete {
             protected Void call() throws Exception {
                 try {
                     if (!path.isDirectory()){
-                        FileUtils.moveFileToDirectory(path, new File(FileSys.HOME.getPath() + "/.local/share/Trash/files"),false);
+                        FileUtils.moveFileToDirectory(path, new File(FileSys.HOME.getPath() + "/.local/share/Trash/files"),true);
                     }else {
-                        FileUtils.moveDirectoryToDirectory(path, new File(FileSys.HOME.getPath() + "/.local/share/Trash/files"),false);
+                        FileUtils.moveDirectoryToDirectory(path, new File(FileSys.HOME.getPath() + "/.local/share/Trash/files"),true);
                     }
                 }catch (IOException e){
                     e.printStackTrace();
@@ -31,21 +31,19 @@ public class Delete {
                 return null;
             }
         };
-        progressBar.progressProperty().bind(task.progressProperty());
+        progressBar.setProgress(-1);
         task.setOnSucceeded(event -> {
             if (task.isDone()) {
-                progressBar.progressProperty().unbind();
+             //   progressBar.progressProperty().unbind();
                 progressBar.setProgress(1);
                 showAlerts.Alert(Alert.AlertType.INFORMATION,"Przeniesiono ", "Przeniesiono do kosza", "Kosz");
             }
         });
         task.setOnCancelled(event -> {
-            progressBar.progressProperty().unbind();
             progressBar.setProgress(0.0);
         });
 
         task.setOnFailed(event -> {
-            progressBar.progressProperty().unbind();
             progressBar.setProgress(0.0);
         });
         new Thread(task).start();
@@ -69,22 +67,19 @@ public class Delete {
                     return null;
                 }
             };
-            progressBar.progressProperty().bind(task.progressProperty());
+            progressBar.setProgress(-1);
             task.setOnSucceeded(event -> {
                 if (task.isDone()) {
-                    progressBar.progressProperty().unbind();
                     progressBar.setProgress(1);
-                    showAlerts.Alert(Alert.AlertType.INFORMATION, "Skopiowano ", "Wykonano", "Kopiowanie ");
+                    showAlerts.Alert(Alert.AlertType.INFORMATION, "Przeniesiono ", "Wykonano", "Przenoszenie ");
                     addToList.removeAll();
                 }
             });
             task.setOnCancelled(event -> {
-                progressBar.progressProperty().unbind();
                 progressBar.setProgress(0.0);
             });
 
             task.setOnFailed(event -> {
-                progressBar.progressProperty().unbind();
                 progressBar.setProgress(0.0);
             });
             new Thread(task).start();

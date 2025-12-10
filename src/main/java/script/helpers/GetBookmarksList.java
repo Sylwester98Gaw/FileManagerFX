@@ -7,13 +7,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 
 public class GetBookmarksList {
-    public static javafx.scene.control.ListView<Label> getBookmark;
+    public static javafx.scene.control.ListView<Label> bookmark;
 
-    public static ListView<Label> getGetBookmark() {
-        return getBookmark;
+    public static ListView<Label> getBookmark() {
+        return bookmark;
     }
 
-    public static void setGetBookmark(javafx.scene.control.ListView<Label> getBookmark) {
-        GetBookmarksList.getBookmark = getBookmark;
+    public static void setBookmark(javafx.scene.control.ListView<Label> getBookmark) {
+        GetBookmarksList.bookmark = getBookmark;
     }
 }

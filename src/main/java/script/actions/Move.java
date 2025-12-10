@@ -38,21 +38,18 @@ public class Move {
                             return null;
                         }
                     };
-                    progressBar.progressProperty().bind(task.progressProperty());
+                    progressBar.setProgress(-1);
                     task.setOnSucceeded(event -> {
                         if (task.isDone()) {
-                            progressBar.progressProperty().unbind();
                             progressBar.setProgress(1);
                             showAlerts.Alert(Alert.AlertType.INFORMATION, "Przeniesiono ", "" + from + " do " + from, "Kopiowanie ");
                         }
                     });
                     task.setOnCancelled(event -> {
-                        progressBar.progressProperty().unbind();
                         progressBar.setProgress(0.0);
                     });
 
                     task.setOnFailed(event -> {
-                        progressBar.progressProperty().unbind();
                         progressBar.setProgress(0.0);
                     });
                     new Thread(task).start();
@@ -69,21 +66,18 @@ public class Move {
                             return null;
                         }
                     };
-                    progressBar.progressProperty().bind(task.progressProperty());
+                    progressBar.setProgress(-1);
                     task.setOnSucceeded(event -> {
                         if (task.isDone()) {
-                            progressBar.progressProperty().unbind();
                             progressBar.setProgress(1);
                             showAlerts.Alert(Alert.AlertType.INFORMATION, "Przeniesiono ", "" + from + " do " + from, "Kopiowanie ");
                         }
                     });
                     task.setOnCancelled(event -> {
-                        progressBar.progressProperty().unbind();
                         progressBar.setProgress(0.0);
                     });
 
                     task.setOnFailed(event -> {
-                        progressBar.progressProperty().unbind();
                         progressBar.setProgress(0.0);
                     });
                     new Thread(task).start();
@@ -94,7 +88,7 @@ public class Move {
         AddToList addToList = new AddToList();
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Przenoszenie");
-        alert.setHeaderText("Przenoszenie z " + AddToList.list + " do " + to);
+        alert.setHeaderText("Przenoszenie z " + AddToList.list.toString() + " do " + to);
         alert.setContentText("Wszystko się zgadza ?");
         ButtonType okButton = new ButtonType("OK");
         ButtonType cancelButton = new ButtonType("Anuluj", ButtonType.CANCEL.getButtonData());
@@ -109,28 +103,25 @@ public class Move {
                                 try {
                                     FileUtils.moveDirectoryToDirectory(files, to, true);
                                 } catch (IOException e) {
-                                    showAlerts.Alert(Alert.AlertType.ERROR, "Kopiowanie nie udane ", String.valueOf(e), "B");
+                                    showAlerts.Alert(Alert.AlertType.ERROR, "Przeniesiono nie udane ", String.valueOf(e), "B");
                                     throw new RuntimeException(e);
                                 }
                                 return null;
                             }
                         };
-                        progressBar.progressProperty().bind(task.progressProperty());
+                        progressBar.setProgress(-1);
                         task.setOnSucceeded(event -> {
                             if (task.isDone()) {
-                                progressBar.progressProperty().unbind();
                                 progressBar.setProgress(1);
-                                showAlerts.Alert(Alert.AlertType.INFORMATION, "Skopiowano ", "Wykonano", "Kopiowanie ");
+                                showAlerts.Alert(Alert.AlertType.INFORMATION, "Przeniesiono ", "Wykonano", "Przenoszenie ");
                                 addToList.removeAll();
                             }
                         });
                         task.setOnCancelled(event -> {
-                            progressBar.progressProperty().unbind();
                             progressBar.setProgress(0.0);
                         });
 
                         task.setOnFailed(event -> {
-                            progressBar.progressProperty().unbind();
                             progressBar.setProgress(0.0);
                         });
                         new Thread(task).start();
@@ -141,29 +132,27 @@ public class Move {
                                 try {
                                     FileUtils.moveFileToDirectory(files, to, true);
                                 } catch (IOException e) {
-                                    showAlerts.Alert(Alert.AlertType.ERROR, "Kopiowanie nie udane ", String.valueOf(e), "B");
+                                    showAlerts.Alert(Alert.AlertType.ERROR, "Przeniesiono nie udane ", String.valueOf(e), "B");
                                     throw new RuntimeException(e);
                                 }
                                 return null;
                             }
                         };
-                        progressBar.progressProperty().bind(task.progressProperty());
+                        progressBar.setProgress(-1);
                         task.setOnSucceeded(event -> {
                             if (task.isDone()) {
-                                progressBar.progressProperty().unbind();
                                 progressBar.setProgress(1);
-                                showAlerts.Alert(Alert.AlertType.INFORMATION, "Skopiowano ", "Wykonano", "Kopiowanie ");
+                                showAlerts.Alert(Alert.AlertType.INFORMATION, "Przeniesiono ", "Wykonano", "Przenoszenie ");
                                 addToList.removeAll();
                             }
                         });
                         task.setOnCancelled(event -> {
-                            progressBar.progressProperty().unbind();
                             progressBar.setProgress(0.0);
+                            addToList.removeAll();
                         });
-
                         task.setOnFailed(event -> {
-                            progressBar.progressProperty().unbind();
                             progressBar.setProgress(0.0);
+                            addToList.removeAll();
                         });
                         new Thread(task).start();
                     }

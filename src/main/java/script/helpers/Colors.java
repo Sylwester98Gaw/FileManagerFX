@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 public enum Colors {
     DEFAULT(Color.BLACK),
     HIDDEN(Color.RED),
-    FILE(Color.CHARTREUSE),
+    FILE(Color.VIOLET),
     APP(Color.CORAL),
     RED(Color.RED),
     BLUE(Color.BLUE),

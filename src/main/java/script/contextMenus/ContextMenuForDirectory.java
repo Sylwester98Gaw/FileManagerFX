@@ -59,25 +59,25 @@ public class ContextMenuForDirectory extends WindowController{
         MenuItem moveToTrash = new MenuItem("Przenieś do kosza");
         MenuItem properties = new MenuItem("Właściwości");
 
-        copy.setOnAction(actionEvent -> contextMenuCopy(selected));
-        paste.setOnAction(actionEvent -> contextMenuPaste(selected));
-        createDir.setOnAction(actionEvent -> contextMenuCreateDir(new File(selected.toURI())));
-        createFile.setOnAction(actionEvent -> contextMenuCreateFile(new File(selected.toURI())));
-        properties.setOnAction(actionEvent -> contextMenuGetProperties(new File(selected.getPath())));
-        terminal.setOnAction(actionEvent -> contextMenuOpenTerminal(new File(selected.getPath())));
-        move.setOnAction(actionEvent -> contextMenuMove());
-        rename.setOnAction(actionEvent -> contextMenuRename(selected));
-        moveToTrash.setOnAction(actionEvent -> contextMenuMoveToTrash(new File(selected.getPath())));
-        addBokmarks.setOnAction(actionEvent -> addDirToBookmarks());
+        copy.setOnAction(_ -> contextMenuCopy(selected));
+        paste.setOnAction(_ -> contextMenuPaste(selected));
+        createDir.setOnAction(_ -> contextMenuCreateDir(new File(selected.toURI())));
+        createFile.setOnAction(_ -> contextMenuCreateFile(new File(selected.toURI())));
+        properties.setOnAction(_ -> contextMenuGetProperties(new File(selected.getPath())));
+        terminal.setOnAction(_ -> contextMenuOpenTerminal(new File(selected.getPath())));
+        move.setOnAction(_ -> contextMenuMove());
+        rename.setOnAction(_ -> contextMenuRename(selected));
+        moveToTrash.setOnAction(_ -> contextMenuMoveToTrash(new File(selected.getPath())));
+        addBokmarks.setOnAction(_ -> addDirToBookmarks());
 
-        redColor.setOnAction(actionEvent -> setViewColor("red", new File(selected.getName())));
-        greenColor.setOnAction(actionEvent -> setViewColor("green", new File(selected.getName())));
-        blueColor.setOnAction(actionEvent -> setViewColor("blue", new File(selected.getName())));
-        silverColor.setOnAction(actionEvent -> setViewColor("silver", new File(selected.getName())));
-        whiteColor.setOnAction(actionEvent -> setViewColor("white", new File(selected.getName())));
-        yellowColor.setOnAction(actionEvent -> setViewColor("yellow", new File(selected.getName())));
-        purpleColor.setOnAction(actionEvent -> setViewColor("purple", new File(selected.getName())));
-        deleteColor.setOnAction(actionEvent -> setViewColor("none",new File(selected.getName())));
+        redColor.setOnAction(_ -> setViewColor("red", new File(selected.getName())));
+        greenColor.setOnAction(_ -> setViewColor("green", new File(selected.getName())));
+        blueColor.setOnAction(_ -> setViewColor("blue", new File(selected.getName())));
+        silverColor.setOnAction(_ -> setViewColor("silver", new File(selected.getName())));
+        whiteColor.setOnAction(_ -> setViewColor("white", new File(selected.getName())));
+        yellowColor.setOnAction(_ -> setViewColor("yellow", new File(selected.getName())));
+        purpleColor.setOnAction(_ -> setViewColor("purple", new File(selected.getName())));
+        deleteColor.setOnAction(_ -> setViewColor("none",new File(selected.getName())));
 
         dirContext.getItems().add(move);
         dirContext.getItems().add(copy);

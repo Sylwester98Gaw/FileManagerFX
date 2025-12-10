@@ -12,8 +12,8 @@ import javafx.util.Duration;
 
 public class BlinkingLabel {
     public void blinkingHidden(Label label){
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), evt -> label.setStyle("-fx-background-color: #454444; -fx-background-radius: 5;")),
-                new KeyFrame(Duration.seconds( 0.5), evt -> label.setStyle("-fx-background-color: transparent;")));
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.5), evt -> label.setStyle("-fx-background-color: #9C9C9C; -fx-background-radius: 5;")),
+                new KeyFrame(Duration.seconds( 0.2), evt -> label.setStyle("-fx-background-color: transparent;")));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }

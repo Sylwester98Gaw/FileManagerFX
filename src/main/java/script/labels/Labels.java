@@ -9,9 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javafx.application.Platform;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.Cursor;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -19,46 +18,36 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 
 import org.apache.commons.io.FilenameUtils;
-import script.helpers.Colors;
-import script.helpers.GetMultipleSelect;
-import script.helpers.ShowIcons;
+import script.helpers.*;
 import script.properties.Config;
 
 public class Labels extends ShowIcons{
     public static int objects = 0;
-    public static int numberOfDirs = 0;
-    public static int numberOfFiles = 0;
     static double translateX;
     static double last_TranslateX;
     static double translateY;
     static double last_TranslateY;
     public static Label clicked;
-    public static String otherProgram;
 
-    public static Label getClicked() {
-        return clicked;
-    }
-
-    public static void setClicked(Label clicked) {
-        Labels.clicked = clicked;
-    }
-
-    public static int getMouse() {
-        return mouse;
-    }
-
-    public static void setMouse(int mouse) {
-        Labels.mouse = mouse;
-    }
     ArrayList<Label> specialViewList = new ArrayList<>();
     public static int mouse;
     BlinkingLabel blinkingLabel = new BlinkingLabel();
-    private InputStream inputStream;
     private Image image;
     private int filesLoadedLenght = 1;
     private int filesLenght = 0;
-
-    public synchronized void refresh(FlowPane flowPane, Label path, Label lastpaths, TextField textField, Boolean isHiddenFilter,Label loadedFiles) {
+    ShowAlerts showAlerts = new ShowAlerts();
+   // GetSize getSize = new GetSize();
+    StringBuilder name;
+    /**
+     *
+     * @param flowPane todo description
+     * @param path todo description
+     * @param lastpaths todo description
+     * @param textField todo description
+     * @param isHiddenFilter todo description
+     * @param loadedFiles todo description
+     */
+    public void refresh(FlowPane flowPane, Label path, Label lastpaths, TextField textField, Boolean isHiddenFilter,Label loadedFiles) {
         FileFilter fileFilter = pathname -> pathname.isHidden() ? isHiddenFilter.booleanValue() : true;
         flowPane.getChildren().clear();
         filesLoadedLenght = 1;
@@ -71,7 +60,9 @@ public class Labels extends ShowIcons{
             }
         }catch (NullPointerException e){
             e.printStackTrace();
-            loadedFiles.setText("Błąd ! NPE");
+            loadedFiles.setText("Brak dostępu");
+            showAlerts.Alert(Alert.AlertType.ERROR,"Brak dostępu ! Brak uprawnień",e.getMessage(), "Poważny błąd");
+            path.setText(FileSys.HOME.getPath());
         }
         filesLenght = filesList.length;
         try {
@@ -79,7 +70,15 @@ public class Labels extends ShowIcons{
             Arrays.sort(filesList);
             Thread thread = new Thread(() -> {
                 for (File file : filesList) {
+//                    name = null;
+//                    if (file.getName().length()>10){
+//                        name = new StringBuilder(file.getName()).insert(15,"\n"); TEST
+//                    }else {
+//                        name = new StringBuilder(file.getName());
+//                    }
                     Label label = new Label(file.getName());
+                    label.setWrapText(true);
+//                    ImageView icon = (ImageView) FileSystemView.getFileSystemView().getSystemIcon(file,48,48); // WARNING new icon view has bugs
                     label.setContentDisplay(ContentDisplay.LEFT); // set display
                     if (GetMultipleSelect.getCheckBox().isSelected()){
                         if (specialViewList.contains(label)){
@@ -90,163 +89,166 @@ public class Labels extends ShowIcons{
                         Config config = new Config();
                         label.setTranslateX(config.loadTranslate(true, file.getName()));
                         label.setTranslateY(config.loadTranslate(false, file.getName()));
-                        String clr = config.loadFileViewColor(file.getName());
-                        if (!(clr == null)){
-                            switch (clr){
-                                case "RED":
-                                    label.setStyle("-fx-background-color: red; -fx-background-radius: 5;");
-                                    break;
-                                case "BLUE":
-                                    label.setStyle("-fx-background-color: blue; -fx-background-radius: 5;");
-                                    break;
-                                case "GREEN":
-                                    label.setStyle("-fx-background-color: green; -fx-background-radius: 5;");
-                                    break;
-                                case "SILVER":
-                                    label.setTextFill(Colors.DEFAULT.getColor());
-                                    label.setStyle("-fx-background-color: silver; -fx-background-radius: 5;");
-                                    break;
-                                case "WHITE":
-                                    label.setTextFill(Colors.DEFAULT.getColor());
-                                    label.setStyle("-fx-background-color: white; -fx-background-radius: 5;");
-                                    break;
-                                case "YELLOW":
-                                    label.setTextFill(Colors.DEFAULT.getColor());
-                                    label.setStyle("-fx-background-color: yellow; -fx-background-radius: 5;");
-                                    break;
-                                case "PURPLE":
-                                    label.setStyle("-fx-background-color: purple; -fx-background-radius: 5;");
-                                    break;
-                                case "none":
-                                    label.setStyle("-fx-background-color: transparent;");
-                                    break;
-                            }
-                        }
+                        colorView(label,file);
                     }
                     if (file.isHidden()) { // showing hidden dirs and files
                         label.setTextFill(Colors.HIDDEN.getColor());
-                        label.setGraphic(new ImageView(getImageFromNameFileIcons("bin.png")));
+                        label.setGraphic(new ImageView(getImageExec("bin.png")));
                         if (file.isDirectory()) {
                             label.setTextFill(Colors.HIDDEN.getColor());
-                            label.setGraphic(new ImageView(getImageFromNameFileIcons("folder.png")));
+                            label.setGraphic(new ImageView(getImageExec("folder.png")));
                         }
                         if (GetBlinking.getBlinking().equals("true")) { // Checks if blinking is enable
                             blinkingLabel.blinkingHidden(label);
                         }
                     } else if (file.isDirectory()) {
-                        label.setTextFill(Colors.WHITE.getColor());
-                        label.setGraphic(new ImageView(getImageFromNameFileIcons("folder.png")));
+                        if (GetTheme.isLight()){
+                            label.setTextFill(Colors.DEFAULT.getColor());
+                        }else {
+                            label.setTextFill(Colors.WHITE.getColor());
+                        }
+                        label.setGraphic(new ImageView(getImageExec("folder.png")));
+                      //  label.setGraphic(new ImageView(String.valueOf(icon))); // WARNING new icon view has bugs
                     } else {
                         label.setTextFill(Colors.FILE.getColor());
                         String extension = FilenameUtils.getExtension(file.getName());
                         switch (extension) {
                             case "bin":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("bin.png")));
+                                label.setGraphic(new ImageView(getImageExec("bin.png")));
                                 break;
                             case "cmd":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("cmd.png")));
+                                label.setGraphic(new ImageView(getImageExec("cmd.png")));
                                 break;
                             case "jar":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("jar.png")));
+                                label.setGraphic(new ImageView(getImageExec("jar.png")));
                                 break;
                             case "java":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("java.png")));
+                                label.setGraphic(new ImageView(getImageExec("java.png")));
                                 break;
                             case "json":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("json.png")));
+                                label.setGraphic(new ImageView(getImageExec("json.png")));
                                 break;
                             case "app":
                             case "AppImage":
                             case "desktop":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("app.png")));
+                            case "x86":
+                            case "x86_64":
+                                label.setGraphic(new ImageView(getImageExec("app.png")));
                                 label.setTextFill(Colors.APP.getColor());
                                 break;
                             case "config":
                             case "properties":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("config.png")));
+                                label.setGraphic(new ImageView(getImageExec("config.png")));
                                 break;
                             case "zip":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("zip.png")));
+                                label.setGraphic(new ImageView(getImageExec("zip.png")));
                                 break;
                             case "rar":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("rar.png")));
+                                label.setGraphic(new ImageView(getImageExec("rar.png")));
                                 break;
                             case "xz":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("xz.png")));
+                                label.setGraphic(new ImageView(getImageExec("xz.png")));
+                                break;
+                            case "gz":
+                                label.setGraphic(new ImageView(getImageExec("gz.png")));
                                 break;
                             case "xml":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("xml.png")));
+                                label.setGraphic(new ImageView(getImageExec("xml.png")));
                                 break;
                             case "deb":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("deb.png")));
+                                label.setGraphic(new ImageView(getImageExec("deb.png")));
                                 break;
                             case "gitignore":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("gitignore.png")));
+                                label.setGraphic(new ImageView(getImageExec("gitignore.png")));
                                 break;
                             case "MOV":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("mov.png")));
+                                label.setGraphic(new ImageView(getImageExec("mov.png")));
                                 break;
                             case "mp3":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("mp3.png")));
+                                label.setGraphic(new ImageView(getImageExec("mp3.png")));
                                 break;
                             case "mp4":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("mp4.png")));
+                                label.setGraphic(new ImageView(getImageExec("mp4.png")));
                                 break;
                             case "mpeg":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("mpeg.png")));
+                                label.setGraphic(new ImageView(getImageExec("mpeg.png")));
                                 break;
                             case "html":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("html.png")));
+                                label.setGraphic(new ImageView(getImageExec("html.png")));
                                 break;
                             case "bash":
                             case "sh":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("bash.png")));
+                                label.setGraphic(new ImageView(getImageExec("bash.png")));
                                 break;
                             case "avi":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("avi.png")));
+                                label.setGraphic(new ImageView(getImageExec("avi.png")));
                                 break;
                             case "jpg":
                             case "jpeg":
                             case "png":
                                 try {
-                                    inputStream = new FileInputStream(file.getAbsolutePath());
-                                    image = new Image(inputStream, Double.parseDouble(Config.getFileX()), Double.parseDouble(Config.getFileY()), true, true);
-                                    try {
-                                        inputStream.close();
-                                    } catch (IOException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                } catch (FileNotFoundException e) {
+                                    byte[] imageBytes = java.nio.file.Files.readAllBytes(file.toPath());
+                                    ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(imageBytes);
+                                    ByteArrayInputStream byteArrayInputStreamBig = new ByteArrayInputStream(imageBytes);
+                                    labelWithTooltipImage(label,byteArrayInputStreamBig);
+                                    image = new Image(byteArrayInputStream, Double.parseDouble(Config.getFileX()), Double.parseDouble(Config.getFileY()), true, true);
+                                } catch (IOException e) {
                                     throw new RuntimeException(e);
                                 }
                                 label.setGraphic(new ImageView(image));
                                 break;
                             case "txt":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("txt.png")));
+                                label.setGraphic(new ImageView(getImageExec("txt.png")));
                                 break;
                             case "class":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("class.png")));
+                                label.setGraphic(new ImageView(getImageExec("class.png")));
                                 break;
                             case "so":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("so.png")));
+                            case "o":
+                            case "0":
+                            case "1":
+                            case "2":
+                            case "3":
+                            case "4":
+                            case "5":
+                            case "6":
+                            case "7":
+                            case "8":
+                            case "9":
+                                label.setGraphic(new ImageView(getImageExec("so.png")));
                                 break;
                             case "conf":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("conf.png")));
+                                label.setGraphic(new ImageView(getImageExec("conf.png")));
                                 break;
                             case "data":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("data.png")));
+                                label.setGraphic(new ImageView(getImageExec("data.png")));
                                 break;
                             case "wav":
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("wav.png")));
+                                label.setGraphic(new ImageView(getImageExec("wav.png")));
+                                break;
+                            case "pdf":
+                                label.setGraphic(new ImageView(getImageExec("pdf.png")));
+                                break;
+                            case "dll":
+                                label.setGraphic(new ImageView(getImageExec("dll.png")));
+                                break;
+                            case "dat":
+                                label.setGraphic(new ImageView(getImageExec("dat.png")));
+                                break;
+                            case "cfg":
+                                label.setGraphic(new ImageView(getImageExec("cfg.png")));
+                                break;
+                            case "exe":
+                                label.setGraphic(new ImageView(getImageExec("exe.png")));
                                 break;
                             default:
-                                label.setGraphic(new ImageView(getImageFromNameFileIcons("blank.png")));
+                                label.setGraphic(new ImageView(getImageExec("blank.png")));
                                 break;
                         }
                     }
 
-                    label.setOnMouseEntered(mouseEvent -> entered(label));
-                    label.setOnMouseExited(mouseEvent -> exited(label));
+                    label.setOnMouseEntered(_ -> entered(label,file));
+                    label.setOnMouseExited(_ -> exited(label,file,isHiddenFilter));
                     if (GetMove.getMoveIcon().equals("true")) {
                         label.setOnMousePressed(mouseEvent -> press(label, mouseEvent));
                         label.setOnMouseReleased(mouseEvent -> released(label, mouseEvent));
@@ -257,11 +259,14 @@ public class Labels extends ShowIcons{
                         lastpaths.setText(path.getText());
                         if (filesLenght != filesLoadedLenght){
                             loadedFiles.setText(((filesLoadedLenght++)+" Ładuje..."));
+                            double progress = (double) filesLoadedLenght / filesLenght;
+                            GetProgress.getProgressBar().setProgress(progress);
                             if (filesLoadedLenght > filesLenght){
                                 refresh(flowPane,path,lastpaths,textField,isHiddenFilter,loadedFiles);
                             }
                         }else {
                             loadedFiles.setText(((filesLoadedLenght++)+" Element-ów"));
+                            GetProgress.progressBar.setProgress(0);
                         }
 
                     });
@@ -274,10 +279,57 @@ public class Labels extends ShowIcons{
         }
     }
 
-    private void entered(Label label) {
+    private void labelWithTooltipImage(Label label, ByteArrayInputStream byteArrayInputStream) {
+        image = new Image(byteArrayInputStream, 296,296, true, true);
+        Tooltip tooltip = new Tooltip("Podgląd: "+label.getText());
+        tooltip.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        tooltip.setGraphic(new ImageView(image));
+        label.setTooltip(tooltip);
+    }
+
+    private void colorView(Label label,File file){
+        Config config = new Config();
+        String clr = config.loadFileViewColor(file.getName());
+        if (!(clr == null)){
+            switch (clr){
+                case "RED":
+                    label.setStyle("-fx-background-color: red; -fx-background-radius: 5;");
+                    break;
+                case "BLUE":
+                    label.setStyle("-fx-background-color: blue; -fx-background-radius: 5;");
+                    break;
+                case "GREEN":
+                    label.setStyle("-fx-background-color: green; -fx-background-radius: 5;");
+                    break;
+                case "SILVER":
+                    label.setTextFill(Colors.DEFAULT.getColor());
+                    label.setStyle("-fx-background-color: silver; -fx-background-radius: 5;");
+                    break;
+                case "WHITE":
+                    label.setTextFill(Colors.DEFAULT.getColor());
+                    label.setStyle("-fx-background-color: white; -fx-background-radius: 5;");
+                    break;
+                case "YELLOW":
+                    label.setTextFill(Colors.DEFAULT.getColor());
+                    label.setStyle("-fx-background-color: yellow; -fx-background-radius: 5;");
+                    break;
+                case "PURPLE":
+                    label.setStyle("-fx-background-color: purple; -fx-background-radius: 5;");
+                    break;
+                case "none":
+                    label.setStyle("-fx-background-color: transparent;");
+                    break;
+            }
+        }
+    }
+    private void entered(Label label,File file) {
+        label.setCursor(Cursor.HAND);
         label.setOnMouseClicked(mouseEvent -> {
             clicked = label;
             label.setStyle("-fx-background-color: #668cff; -fx-background-radius: 5;");
+            if (file.isDirectory()){
+                label.setGraphic(new ImageView(getImageExec("folder-open.png")));
+            }
             mouse = mouseEvent.getClickCount();
             if (mouse >= 2) {
                 label.setStyle("-fx-background-color: #28a300; -fx-background-radius: 5;");
@@ -294,16 +346,26 @@ public class Labels extends ShowIcons{
         });
         if(!GetMultipleSelect.getCheckBox().isSelected()){
             removeAll();
-            label.setStyle("-fx-background-color: #444444; -fx-background-radius: 5;");
+            if (GetTheme.isLight()){
+                label.setStyle("-fx-background-color: #DFDFDF; -fx-background-radius: 5;");
+            }else {
+                label.setStyle("-fx-background-color: #444444; -fx-background-radius: 5;");
+            }
+
         }
-
     }
-
-    private void exited(Label label) {
+    private void exited(Label label,File file,Boolean isHidden) {
         clicked = null; // this fix a bug
         mouse = 0;
+        if (file.isDirectory()){
+            label.setGraphic(new ImageView(getImageExec("folder.png")));
+        }
         if (!specialViewList.contains(label)){
-            label.setStyle("-fx-background-color: transparent;"); // TODO
+            label.setStyle("-fx-background-color: transparent;");
+            if (!isHidden){
+                colorView(label,file);
+            }
+
         }
     }
 

@@ -25,9 +25,9 @@ public class ContextMenuForFlowPane extends  WindowController  {
         menuL.getItems().add(createDirL);
         menuL.getItems().add(createFileL);
 
-        pasteL.setOnAction(actionEvent -> contextMenuPaste(new File(file.getAbsolutePath())));
-        createDirL.setOnAction(actionEvent -> contextMenuCreateDir(new File(file.getAbsolutePath())));
-        createFileL.setOnAction(actionEvent -> contextMenuCreateFile(new File(file.getAbsolutePath())));
+        pasteL.setOnAction(_ -> contextMenuPaste(new File(file.getAbsolutePath())));
+        createDirL.setOnAction(_ -> contextMenuCreateDir(new File(file.getAbsolutePath())));
+        createFileL.setOnAction(_ -> contextMenuCreateFile(new File(file.getAbsolutePath())));
        // move.setOnAction(actionEvent -> contextMenuMove(new File(path.getText())));
         contextMenuFlowPane.getItems().add(menuL);
         contextMenuFlowPane.getItems().add(pasteL);

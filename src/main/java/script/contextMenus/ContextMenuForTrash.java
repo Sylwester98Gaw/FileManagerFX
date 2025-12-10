@@ -17,8 +17,8 @@ public class ContextMenuForTrash extends WindowController {
     public void contextMenuForTrash(){
         MenuItem move = new MenuItem("Przywróć do...");
         MenuItem delete = new MenuItem("Usuń");
-        delete.setOnAction(actionEvent -> contextMenuDeleteDir(selected));
-        move.setOnAction(actionEvent -> contextMenuMove());
+        delete.setOnAction(_ -> contextMenuDeleteDir(selected));
+        move.setOnAction(_ -> contextMenuMove());
         contextMenuForTrash.getItems().add(delete);
         contextMenuForTrash.getItems().add(move);
     }

@@ -18,8 +18,8 @@ public class ContextMenuMultipleSelect extends WindowController {
         MenuItem copy = new MenuItem("Kopiuj");
         MenuItem move = new MenuItem("Przenieś");
         MenuItem moveToTrash = new MenuItem("Przenieś do kosza");
-        moveToTrash.setOnAction(actionEvent -> contextMenuMoveToTrash(null));
-        move.setOnAction(actionEvent -> contextMenuMove());
+        moveToTrash.setOnAction(_ -> contextMenuMoveToTrash(null));
+        move.setOnAction(_ -> contextMenuMove());
         //contextMenuMultipleSelect.getItems().add(copy); TODO
         contextMenuMultipleSelect.getItems().add(move);
         contextMenuMultipleSelect.getItems().add(moveToTrash);
