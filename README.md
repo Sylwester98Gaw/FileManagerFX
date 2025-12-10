@@ -6,7 +6,7 @@ _Program Name: SylwesterFileManager (SFM)_
 
 **About:**
 
-SylwesterFileManager (SFM) is a lightweight file management application for Linux distributions.  
+SylwesterFileManager (SFM) is a file management application for Linux distributions.  
 It allows users to:  
 - Browse and manage files and directories with an intuitive interface  
 - Move, copy, delete, and rename files and folders  
