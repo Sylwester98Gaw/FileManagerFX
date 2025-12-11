@@ -52,4 +52,4 @@ SFM is still in development
 
 **Known Issues:**
 
-The program currently does not detect the available space in the system trash, which may prevent some files from being moved there. This issue will be fixed in a future update. Planned improvements also include adding the ability to display available devices in the bookmark list.
+The program currently does not detect the available space in the system trash, which may prevent some files from being moved there. Integration with trash-cli will be introduced in a future update to allow safer file deletion. Planned improvements also include adding the ability to display available devices in the bookmark list.
