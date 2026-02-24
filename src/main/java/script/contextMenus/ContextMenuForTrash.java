@@ -15,11 +15,11 @@ public class ContextMenuForTrash extends WindowController {
         return contextMenuForTrash;
     }
     public void contextMenuForTrash(){
-        MenuItem move = new MenuItem("Przywróć do...");
+        MenuItem restore = new MenuItem("Przywróć");
         MenuItem delete = new MenuItem("Usuń");
         delete.setOnAction(_ -> contextMenuDeleteDir(selected));
-        move.setOnAction(_ -> contextMenuMove());
+        restore.setOnAction(_ -> contextMenuRestoreFromTrash(selected));
         contextMenuForTrash.getItems().add(delete);
-        contextMenuForTrash.getItems().add(move);
+        contextMenuForTrash.getItems().add(restore);
     }
 }

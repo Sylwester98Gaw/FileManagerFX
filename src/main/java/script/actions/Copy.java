@@ -1,5 +1,7 @@
 package script.actions;
 
+import com.github.plushaze.traynotification.notification.Notification;
+import com.github.plushaze.traynotification.notification.Notifications;
 import javafx.concurrent.Task;
 import javafx.scene.control.ProgressBar;
 import org.apache.commons.io.FileUtils;
@@ -9,9 +11,10 @@ import java.io.*;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import script.helpers.ShowTrayNotification;
 
 public class Copy {
-    ShowAlerts showAlerts = new ShowAlerts();
+    ShowTrayNotification showTrayNotification = new ShowTrayNotification();
 
     public void copy(File from, File to, ProgressBar progressBar) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -30,7 +33,7 @@ public class Copy {
                             try {
                                 FileUtils.copyDirectoryToDirectory(from, to);
                             } catch (IOException e) {
-                                showAlerts.Alert(Alert.AlertType.ERROR, "Kopiowanie nie udane ", String.valueOf(e), "Błąd");
+                                showTrayNotification.viewNotification("Błąd kopiowania", e.getMessage().toString(), Notifications.ERROR);
                                 throw new RuntimeException(e);
                             }
                             return null;
@@ -40,7 +43,7 @@ public class Copy {
                     task.setOnSucceeded(event -> {
                         if (task.isDone()) {
                             progressBar.setProgress(1);
-                            showAlerts.Alert(Alert.AlertType.INFORMATION, "Skopiowano ", "" + from + " do " + to, "Kopiowanie ");
+                            showTrayNotification.viewNotification("Skopiowano", from+" do "+to, Notifications.SUCCESS);
                         }
                     });
                     task.setOnCancelled(event -> {
@@ -57,7 +60,7 @@ public class Copy {
                             try {
                                 FileUtils.copyFileToDirectory(from, to);
                             } catch (IOException e) {
-                                showAlerts.Alert(Alert.AlertType.ERROR, "Kopiowanie nie udane ", String.valueOf(e), "Błąd");
+                                showTrayNotification.viewNotification("Błąd kopiowania", e.getMessage().toString(), Notifications.ERROR);
                                 throw new RuntimeException(e);
                             }
                             return null;
@@ -67,7 +70,7 @@ public class Copy {
                     task.setOnSucceeded(event -> {
                         if (task.isDone()) {
                             progressBar.setProgress(1);
-                            showAlerts.Alert(Alert.AlertType.INFORMATION, "Skopiowano ", "" + from + " do " + to, "Kopiowanie ");
+                            showTrayNotification.viewNotification("Skopiowano", from+" do "+to, Notifications.SUCCESS);
                         }
                     });
 

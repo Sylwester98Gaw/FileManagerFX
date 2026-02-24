@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="130.0" prefWidth="456.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label fx:id="labelFile" text="Plik" />
+      <Label fx:id="from" text="Z" />
+      <Label fx:id="to" text="Do" />
+      <ProgressBar fx:id="progressBar" prefWidth="200.0" />
+      <Button fx:id="cancelButton" mnemonicParsing="false" text="Anuluj" />
+   </children>
+</VBox>

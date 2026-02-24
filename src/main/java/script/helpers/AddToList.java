@@ -15,8 +15,7 @@ public class AddToList {
         System.out.println(list);
     }
     public void removeSelectedFromList(String item){
-        list.remove(item);
-        System.out.println(list);
+        list.remove(new File(item));
     }
     public void removeAll(){
         try {
@@ -31,6 +30,6 @@ public class AddToList {
         }
     }
     public boolean checkItem (String item){
-        return list.contains(item);
+        return list.contains(new File(item));
     }
 }

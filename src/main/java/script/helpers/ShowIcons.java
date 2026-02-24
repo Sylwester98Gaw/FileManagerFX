@@ -79,19 +79,21 @@ public class ShowIcons{
 //                "trash-full.png"
 //        };
         String[] iconNamesBookmarks = {
-                "desktop.png",
-                "documents.png",
-                "download.png",
+               // "desktop.png",
+              //  "documents.png",
+              //  "download.png",
                 "home.png",
                 "mark.png",
-                "music.png",
-                "photo.png",
+              //  "music.png",
+              //  "photo.png",
                 "system.png",
-                "trash.png",
-                "video.png"
+                "disk.png",
+                "trash.png"
+              //  "video.png"
         };
         String[] iconNamesExec = {
                 "0.jpg",
+                "apk.png",
                 "app.png",
                 "avi.png",
                 "bash.png",
@@ -100,6 +102,7 @@ public class ShowIcons{
                 "cfg.png",
                 "class.png",
                 "cmd.png",
+                "css.png",
                 "conf.png",
                 "config.png",
                 "cur.png",
@@ -107,6 +110,7 @@ public class ShowIcons{
                 "dat.png",
                 "deb.png",
                 "dll.png",
+                "doc.png",
                 "folder.png",
                 "folder-open.png",
                 "gitignore.png",
@@ -119,7 +123,9 @@ public class ShowIcons{
                 "mp4.png",
                 "mpeg.png",
                 "rar.png",
+                "rpm.png",
                 "so.png",
+                "sh.png",
                 "txt.png",
                 "wav.png",
                 "xml.png",
@@ -127,6 +133,7 @@ public class ShowIcons{
                 "gz.png",
                 "pdf.png",
                 "exe.png",
+                "7z.png",
                 "zip.png"
         };
         for (String name : iconNamesExec){

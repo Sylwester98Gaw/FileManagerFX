@@ -21,7 +21,7 @@ public class CreateDirOrFiles {
         dialog.setContentText("Nazwa:");
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(directoryName -> {
-            if (!namesChecker.checkName(result.toString())) {
+            if (!namesChecker.checkName(result.get()) && !namesChecker.checkIsEmpty(result.get())) {
                 if (type){
                     File newDirectory = new File(pathWhere + "/" + result.get()); //MakeDir true
                     mkdir(newDirectory);

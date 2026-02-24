@@ -91,4 +91,17 @@ public class ContextMenuForDirectory extends WindowController{
         dirContext.getItems().add(setColor);
     }
 
+    public void resetList(){
+        try {
+            for (int i = 0; i < getDirContext().getItems().size(); i++) {
+                getDirContext().getItems().remove(i);
+            }
+            if (!getDirContext().getItems().isEmpty()){
+                resetList();
+            }
+        }catch (Exception e){
+            e.getStackTrace();
+        }
+    }
+
 }

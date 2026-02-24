@@ -36,7 +36,6 @@ public class Labels extends ShowIcons{
     private int filesLoadedLenght = 1;
     private int filesLenght = 0;
     ShowAlerts showAlerts = new ShowAlerts();
-   // GetSize getSize = new GetSize();
     StringBuilder name;
     /**
      *
@@ -60,8 +59,8 @@ public class Labels extends ShowIcons{
             }
         }catch (NullPointerException e){
             e.printStackTrace();
-            loadedFiles.setText("Brak dostępu");
-            showAlerts.Alert(Alert.AlertType.ERROR,"Brak dostępu ! Brak uprawnień",e.getMessage(), "Poważny błąd");
+            loadedFiles.setText("Brak dostępu/Katalog nie istnieje");
+            showAlerts.Alert(Alert.AlertType.ERROR,"Brak dostępu ! Lub katalog nie istnieje !",e.getMessage(), "Poważny błąd");
             path.setText(FileSys.HOME.getPath());
         }
         filesLenght = filesList.length;
@@ -118,6 +117,21 @@ public class Labels extends ShowIcons{
                                 break;
                             case "cmd":
                                 label.setGraphic(new ImageView(getImageExec("cmd.png")));
+                                break;
+                            case "apk":
+                                label.setGraphic(new ImageView(getImageExec("apk.png")));
+                                break;
+                            case "css":
+                                label.setGraphic(new ImageView(getImageExec("css.png")));
+                                break;
+                            case "doc":
+                                label.setGraphic(new ImageView(getImageExec("doc.png")));
+                                break;
+                            case "rpm":
+                                label.setGraphic(new ImageView(getImageExec("rpm.png")));
+                                break;
+                            case "7z":
+                                label.setGraphic(new ImageView(getImageExec("7z.png")));
                                 break;
                             case "jar":
                                 label.setGraphic(new ImageView(getImageExec("jar.png")));
@@ -176,8 +190,10 @@ public class Labels extends ShowIcons{
                             case "html":
                                 label.setGraphic(new ImageView(getImageExec("html.png")));
                                 break;
-                            case "bash":
                             case "sh":
+                                label.setGraphic(new ImageView(getImageExec("sh.png")));
+                                break;
+                            case "bash":
                                 label.setGraphic(new ImageView(getImageExec("bash.png")));
                                 break;
                             case "avi":
@@ -199,6 +215,7 @@ public class Labels extends ShowIcons{
                                 break;
                             case "txt":
                                 label.setGraphic(new ImageView(getImageExec("txt.png")));
+                                labelWithTooltipText(label,file);
                                 break;
                             case "class":
                                 label.setGraphic(new ImageView(getImageExec("class.png")));
@@ -278,7 +295,20 @@ public class Labels extends ShowIcons{
             objects = 0;
         }
     }
+    private void labelWithTooltipText(Label label, File file){
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+            Tooltip tooltip = new Tooltip(bufferedReader.readLine());
+            label.setTooltip(tooltip);
+            bufferedReader.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
+
+    }
     private void labelWithTooltipImage(Label label, ByteArrayInputStream byteArrayInputStream) {
         image = new Image(byteArrayInputStream, 296,296, true, true);
         Tooltip tooltip = new Tooltip("Podgląd: "+label.getText());
@@ -322,17 +352,19 @@ public class Labels extends ShowIcons{
             }
         }
     }
+    // TODO RGBA TEST
     private void entered(Label label,File file) {
         label.setCursor(Cursor.HAND);
         label.setOnMouseClicked(mouseEvent -> {
             clicked = label;
-            label.setStyle("-fx-background-color: #668cff; -fx-background-radius: 5;");
+           // label.setStyle("-fx-background-color: #668cff; -fx-background-radius: 5;");
+            label.setStyle("-fx-background-color: rgba(102,140,255,0.9); -fx-background-radius: 5;"); // test RGBA
             if (file.isDirectory()){
                 label.setGraphic(new ImageView(getImageExec("folder-open.png")));
             }
             mouse = mouseEvent.getClickCount();
             if (mouse >= 2) {
-                label.setStyle("-fx-background-color: #28a300; -fx-background-radius: 5;");
+                label.setStyle("-fx-background-color: rgba(40,163,0,0.9); -fx-background-radius: 5;"); // test RGBA
             }
             if (GetMultipleSelect.getCheckBox().isSelected() && mouseEvent.getButton() == MouseButton.PRIMARY){
                 if (mouse >=1) {
@@ -347,9 +379,11 @@ public class Labels extends ShowIcons{
         if(!GetMultipleSelect.getCheckBox().isSelected()){
             removeAll();
             if (GetTheme.isLight()){
-                label.setStyle("-fx-background-color: #DFDFDF; -fx-background-radius: 5;");
+               // label.setStyle("-fx-background-color: #DFDFDF; -fx-background-radius: 5;");
+                label.setStyle("-fx-background-color: rgba(102,140,255,0.24); -fx-background-radius: 5;");
             }else {
-                label.setStyle("-fx-background-color: #444444; -fx-background-radius: 5;");
+               // label.setStyle("-fx-background-color: #444444; -fx-background-radius: 5;");
+                label.setStyle("-fx-background-color: rgba(102,140,255,0.24); -fx-background-radius: 5;");
             }
 
         }

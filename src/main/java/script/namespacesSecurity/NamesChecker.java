@@ -5,17 +5,16 @@ import script.helpers.ShowAlerts;
 
 public class NamesChecker {
     /*
-        Checks for "/" in "name" if it is, returns true, otherwise false
-     */
+         Checks for "/" in "name" if it is, returns true, otherwise false
+      */
     ShowAlerts showAlerts = new ShowAlerts();
     public boolean checkName (String name){
-        if (name.indexOf("/") >= 0){
-            return true;
-        }else {
-            return false;
-        }
+        return name.contains("/");
+    }
+    public boolean checkIsEmpty (String name){
+        return name.isEmpty();
     }
     public void badName (){
-        showAlerts.Alert(Alert.AlertType.WARNING,"Uwaga !","Nie można w nazwie używać znaku /","Mamy problem :/");
+        showAlerts.Alert(Alert.AlertType.WARNING,"Uwaga !","Nie można w nazwie używać znaku /, lub nazwa jest pusta.","Problem z nazwą");
     }
 }

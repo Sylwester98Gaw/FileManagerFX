@@ -25,10 +25,10 @@ public class App extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException {
+        checkSystem();
         config.checkDefaultProgramDirOrCreateIt();
         config.openConfigFile();
         config.loadAddedBookmarks();
-        checkSystem();
         try {
             if (arguments.isEmpty()) {
                 arguments = config.getStart_Position_Without_Argument();

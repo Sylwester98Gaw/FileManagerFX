@@ -17,21 +17,30 @@ public class ContextMenuForFlowPane extends  WindowController  {
     }
     public void flowPaneContextMenu() {
         //**********************************************
-        MenuItem pasteL = new MenuItem("Wklej");
-       // MenuItem move = new MenuItem("Przenieś");
-        Menu menuL = new Menu("Stwórz...");
-        MenuItem createDirL = new MenuItem("Stwórz katalog");
-        MenuItem createFileL = new MenuItem("Stwórz plik");
-        menuL.getItems().add(createDirL);
-        menuL.getItems().add(createFileL);
+        MenuItem paste = new MenuItem("Wklej");
+        Menu menu = new Menu("Stwórz...");
+        MenuItem createDir = new MenuItem("Stwórz katalog");
+        MenuItem createFile = new MenuItem("Stwórz plik");
+        menu.getItems().add(createDir);
+        menu.getItems().add(createFile);
 
-        pasteL.setOnAction(_ -> contextMenuPaste(new File(file.getAbsolutePath())));
-        createDirL.setOnAction(_ -> contextMenuCreateDir(new File(file.getAbsolutePath())));
-        createFileL.setOnAction(_ -> contextMenuCreateFile(new File(file.getAbsolutePath())));
-       // move.setOnAction(actionEvent -> contextMenuMove(new File(path.getText())));
-        contextMenuFlowPane.getItems().add(menuL);
-        contextMenuFlowPane.getItems().add(pasteL);
-        //contextMenuFlowPane.getItems().add(move);
+        paste.setOnAction(_ -> contextMenuPaste(new File(file.getAbsolutePath())));
+        createDir.setOnAction(_ -> contextMenuCreateDir(new File(file.getAbsolutePath())));
+        createFile.setOnAction(_ -> contextMenuCreateFile(new File(file.getAbsolutePath())));
+        contextMenuFlowPane.getItems().add(menu);
+        contextMenuFlowPane.getItems().add(paste);
         //**********************************************
+    }
+    public void resetList(){
+        try {
+            for (int i = 0; i < getContextMenuFlowPane().getItems().size(); i++) {
+                getContextMenuFlowPane().getItems().remove(i);
+            }
+            if (!getContextMenuFlowPane().getItems().isEmpty()){
+                resetList();
+            }
+        }catch (Exception e){
+            e.getStackTrace();
+        }
     }
 }

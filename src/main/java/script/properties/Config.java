@@ -14,7 +14,6 @@ import java.util.Properties;
 public class Config {
     private final File programDirs = new File(FileSys.HOME.getPath() + "/.SFM_data");
     private final File programConfigFile = new File(FileSys.HOME.getPath() + "/.SFM_data/FileManagerPROP.properties");
-    private final File programTmps = new File(FileSys.HOME.getPath() + "/.SFM_data/tmps");
     private final File programExec = new File(FileSys.HOME.getPath() + "/.SFM_data/exec");
     private final File programFileColorConfig = new File(FileSys.HOME.getPath() + "/.SFM_data/fileColorConfig");
     private final File programUserBookmarks = new File(FileSys.HOME.getPath() + "/.SFM_data/UserBookmarks");
@@ -157,11 +156,10 @@ public class Config {
     }
 
     public void checkDefaultProgramDirOrCreateIt() {
-        if (!programDirs.exists() && !programExec.exists() && !programTmps.exists() && !programUserBookmarks.exists() && !programConfigFile.exists() && !programFileColorConfig.exists()) {
+        if (!programDirs.exists() && !programExec.exists() && !programUserBookmarks.exists() && !programConfigFile.exists() && !programFileColorConfig.exists()) {
             try {
                 Properties propertiesConfig = getProperties();
                 FileUtils.forceMkdir(programDirs);
-                FileUtils.forceMkdir(programTmps);
                 FileUtils.forceMkdir(programExec);
                 FileUtils.forceMkdir(programUserBookmarks);
                 FileUtils.forceMkdir(programFileColorConfig);
@@ -254,6 +252,9 @@ public class Config {
             throw new RuntimeException(e);
         }
     }
+//    public void putIntoMap(String key, String value){
+//        bookmarkMap.put(key, value);
+//    }
 
     public void loadAddedBookmarks() {
         File[] filesList = programUserBookmarks.listFiles();

@@ -46,7 +46,6 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.effect.Glow?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
@@ -57,7 +56,7 @@
 
 <VBox fx:id="vBox" maxHeight="2000.0" maxWidth="2000.0" prefHeight="470.0" prefWidth="855.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="script.controller.WindowController">
   <children>
-      <MenuBar>
+      <MenuBar style="-fx-background-color: #F2F2F2;">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
@@ -112,9 +111,6 @@
                   <Insets left="5.0" />
                </HBox.margin></Button>
          </children>
-         <effect>
-            <Glow />
-         </effect>
       </HBox>
       <HBox maxHeight="2000.0" maxWidth="2000.0" prefHeight="100.0" prefWidth="200.0">
          <children>
